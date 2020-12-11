@@ -231,7 +231,7 @@ func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, op
 
 	// the service is unchanged, skip registering
 	if ok && v == h && !leaseNotFound {
-		log.Infof("Service % node %s unchanged skipping registration", s.Name, node.Id)
+		log.Infof("Service %s node %s unchanged skipping registration", s.Name, node.Id)
 		return nil
 	}
 
