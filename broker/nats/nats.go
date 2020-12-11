@@ -20,6 +20,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/lack-io/vine/config/cmd"
 	"github.com/nats-io/nats.go"
 
 	"github.com/lack-io/vine/broker"
@@ -27,6 +28,10 @@ import (
 	"github.com/lack-io/vine/log"
 	"github.com/lack-io/vine/registry"
 )
+
+func init() {
+	cmd.DefaultBrokers["nats"] = NewBroker
+}
 
 type natsBroker struct {
 	sync.Once

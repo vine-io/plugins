@@ -138,7 +138,7 @@ github.com/json-iterator/go
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v0.1.1
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.2.1
+# github.com/lack-io/vine v0.2.2
 ## explicit
 github.com/lack-io/vine/api
 github.com/lack-io/vine/auth
@@ -154,7 +154,6 @@ github.com/lack-io/vine/auth/token/jwt
 github.com/lack-io/vine/broker
 github.com/lack-io/vine/broker/http
 github.com/lack-io/vine/broker/memory
-github.com/lack-io/vine/broker/nats
 github.com/lack-io/vine/broker/service
 github.com/lack-io/vine/broker/service/proto
 github.com/lack-io/vine/client
@@ -244,9 +243,10 @@ github.com/mitchellh/hashstructure
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
-# github.com/nats-io/jwt v1.1.0
+# github.com/nats-io/jwt v0.3.2
 github.com/nats-io/jwt
 # github.com/nats-io/nats.go v1.10.0
+## explicit
 github.com/nats-io/nats.go
 github.com/nats-io/nats.go/encoders/builtin
 github.com/nats-io/nats.go/util

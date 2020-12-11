@@ -359,6 +359,8 @@ github.com/lack-io/cli v0.1.1 h1:/oXI4oplwNbTmY5+3Vd+jq75t82gGQISvnf34PjNMms=
 github.com/lack-io/cli v0.1.1/go.mod h1:RO7Udy97CJapM06eWztYk2CLVSXwxdmur7y60vpSC0M=
 github.com/lack-io/vine v0.2.1 h1:DZkLGEY1BeTlF+NztfAO6YaJh52/YQqH872aBoMUzPE=
 github.com/lack-io/vine v0.2.1/go.mod h1:Xi6QH+aWUgviXPAYqaDjFkR6iToWzSMeiB8xOKgev9M=
+github.com/lack-io/vine v0.2.2 h1:ad2PT7lE9t+YKGoOvyeUxVeNZJL8hO52y+UkHDCflnE=
+github.com/lack-io/vine v0.2.2/go.mod h1:pExxYb5+JUVFTxJLFgQ3hfTp6bXPN9pN/Ss/TIpTf+0=
 github.com/lib/pq v1.0.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.1.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
@@ -409,6 +411,7 @@ github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3Rllmb
 github.com/morikuni/aec v1.0.0/go.mod h1:BbKIizmSmc5MMPqRYbxO4ZU0S0+P200+tUnFx7PXmsc=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/namedotcom/go v0.0.0-20180403034216-08470befbe04/go.mod h1:5sN+Lt1CaY4wsPvgQH/jsuJi4XO2ssZbdsIizr4CVC8=
+github.com/nats-io/jwt v0.3.2 h1:+RB5hMpXUUA2dfxuhBTEkMOrYmM+gKIZYS1KjSostMI=
 github.com/nats-io/jwt v0.3.2/go.mod h1:/euKqTS1ZD+zzjYrY7pseZrTtWQSjujC7xjPc8wL6eU=
 github.com/nats-io/jwt v1.1.0 h1:+vOlgtM0ZsF46GbmUoadq0/2rChNS45gtxHEa3H1gqM=
 github.com/nats-io/jwt v1.1.0/go.mod h1:n3cvmLfBfnpV4JJRN7lRYCyZnw48ksGsbThGXEk4w9M=
