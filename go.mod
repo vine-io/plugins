@@ -1,4 +1,4 @@
-module github.com/lack-io/plugins/registry/etcd
+module github.com/lack-io/plugins
 
 go 1.15
 
@@ -9,5 +9,4 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/lack-io/vine v0.2.1
 	github.com/mitchellh/hashstructure v1.1.0
-	go.etcd.io/etcd v3.3.25+incompatible // indirect
 )
