@@ -1,0 +1,410 @@
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
+# github.com/bitly/go-simplejson v0.5.0
+github.com/bitly/go-simplejson
+# github.com/coreos/etcd v3.3.18+incompatible
+## explicit
+github.com/coreos/etcd/auth/authpb
+github.com/coreos/etcd/clientv3
+github.com/coreos/etcd/clientv3/balancer
+github.com/coreos/etcd/clientv3/balancer/connectivity
+github.com/coreos/etcd/clientv3/balancer/picker
+github.com/coreos/etcd/clientv3/balancer/resolver/endpoint
+github.com/coreos/etcd/clientv3/credentials
+github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes
+github.com/coreos/etcd/etcdserver/etcdserverpb
+github.com/coreos/etcd/mvcc/mvccpb
+github.com/coreos/etcd/pkg/logutil
+github.com/coreos/etcd/pkg/systemd
+github.com/coreos/etcd/pkg/types
+github.com/coreos/etcd/raft
+github.com/coreos/etcd/raft/raftpb
+# github.com/coreos/go-semver v0.3.0
+## explicit
+# github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f
+github.com/coreos/go-systemd/journal
+# github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
+## explicit
+github.com/coreos/pkg/capnslog
+# github.com/cpuguy83/go-md2man/v2 v2.0.0
+github.com/cpuguy83/go-md2man/v2/md2man
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+github.com/dgrijalva/jwt-go
+# github.com/emirpasic/gods v1.12.0
+github.com/emirpasic/gods/containers
+github.com/emirpasic/gods/lists
+github.com/emirpasic/gods/lists/arraylist
+github.com/emirpasic/gods/trees
+github.com/emirpasic/gods/trees/binaryheap
+github.com/emirpasic/gods/utils
+# github.com/fsnotify/fsnotify v1.4.9
+github.com/fsnotify/fsnotify
+# github.com/go-git/gcfg v1.5.0
+github.com/go-git/gcfg
+github.com/go-git/gcfg/scanner
+github.com/go-git/gcfg/token
+github.com/go-git/gcfg/types
+# github.com/go-git/go-billy/v5 v5.0.0
+github.com/go-git/go-billy/v5
+github.com/go-git/go-billy/v5/helper/chroot
+github.com/go-git/go-billy/v5/helper/polyfill
+github.com/go-git/go-billy/v5/osfs
+github.com/go-git/go-billy/v5/util
+# github.com/go-git/go-git/v5 v5.2.0
+github.com/go-git/go-git/v5
+github.com/go-git/go-git/v5/config
+github.com/go-git/go-git/v5/internal/revision
+github.com/go-git/go-git/v5/internal/url
+github.com/go-git/go-git/v5/plumbing
+github.com/go-git/go-git/v5/plumbing/cache
+github.com/go-git/go-git/v5/plumbing/color
+github.com/go-git/go-git/v5/plumbing/filemode
+github.com/go-git/go-git/v5/plumbing/format/config
+github.com/go-git/go-git/v5/plumbing/format/diff
+github.com/go-git/go-git/v5/plumbing/format/gitignore
+github.com/go-git/go-git/v5/plumbing/format/idxfile
+github.com/go-git/go-git/v5/plumbing/format/index
+github.com/go-git/go-git/v5/plumbing/format/objfile
+github.com/go-git/go-git/v5/plumbing/format/packfile
+github.com/go-git/go-git/v5/plumbing/format/pktline
+github.com/go-git/go-git/v5/plumbing/object
+github.com/go-git/go-git/v5/plumbing/protocol/packp
+github.com/go-git/go-git/v5/plumbing/protocol/packp/capability
+github.com/go-git/go-git/v5/plumbing/protocol/packp/sideband
+github.com/go-git/go-git/v5/plumbing/revlist
+github.com/go-git/go-git/v5/plumbing/storer
+github.com/go-git/go-git/v5/plumbing/transport
+github.com/go-git/go-git/v5/plumbing/transport/client
+github.com/go-git/go-git/v5/plumbing/transport/file
+github.com/go-git/go-git/v5/plumbing/transport/git
+github.com/go-git/go-git/v5/plumbing/transport/http
+github.com/go-git/go-git/v5/plumbing/transport/internal/common
+github.com/go-git/go-git/v5/plumbing/transport/server
+github.com/go-git/go-git/v5/plumbing/transport/ssh
+github.com/go-git/go-git/v5/storage
+github.com/go-git/go-git/v5/storage/filesystem
+github.com/go-git/go-git/v5/storage/filesystem/dotgit
+github.com/go-git/go-git/v5/storage/memory
+github.com/go-git/go-git/v5/utils/binary
+github.com/go-git/go-git/v5/utils/diff
+github.com/go-git/go-git/v5/utils/ioutil
+github.com/go-git/go-git/v5/utils/merkletrie
+github.com/go-git/go-git/v5/utils/merkletrie/filesystem
+github.com/go-git/go-git/v5/utils/merkletrie/index
+github.com/go-git/go-git/v5/utils/merkletrie/internal/frame
+github.com/go-git/go-git/v5/utils/merkletrie/noder
+# github.com/gogo/protobuf v1.3.1
+github.com/gogo/protobuf/gogoproto
+github.com/gogo/protobuf/proto
+github.com/gogo/protobuf/protoc-gen-gogo/descriptor
+github.com/gogo/protobuf/sortkeys
+github.com/gogo/protobuf/types
+# github.com/golang/protobuf v1.4.3
+github.com/golang/protobuf/proto
+github.com/golang/protobuf/protoc-gen-go/descriptor
+github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/ptypes/any
+github.com/golang/protobuf/ptypes/duration
+github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/uuid v1.1.2
+github.com/google/uuid
+# github.com/hashicorp/hcl v1.0.0
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
+# github.com/hpcloud/tail v1.0.0
+github.com/hpcloud/tail
+github.com/hpcloud/tail/ratelimiter
+github.com/hpcloud/tail/util
+github.com/hpcloud/tail/watch
+github.com/hpcloud/tail/winfile
+# github.com/imdario/mergo v0.3.11
+github.com/imdario/mergo
+# github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99
+github.com/jbenet/go-context/io
+# github.com/json-iterator/go v1.1.10
+## explicit
+github.com/json-iterator/go
+# github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd
+github.com/kevinburke/ssh_config
+# github.com/lack-io/cli v0.1.1
+github.com/lack-io/cli
+# github.com/lack-io/vine v0.2.1
+## explicit
+github.com/lack-io/vine/api
+github.com/lack-io/vine/auth
+github.com/lack-io/vine/auth/jwt
+github.com/lack-io/vine/auth/provider
+github.com/lack-io/vine/auth/provider/basic
+github.com/lack-io/vine/auth/provider/oauth
+github.com/lack-io/vine/auth/rules
+github.com/lack-io/vine/auth/service
+github.com/lack-io/vine/auth/service/proto
+github.com/lack-io/vine/auth/token
+github.com/lack-io/vine/auth/token/jwt
+github.com/lack-io/vine/broker
+github.com/lack-io/vine/broker/http
+github.com/lack-io/vine/broker/memory
+github.com/lack-io/vine/broker/nats
+github.com/lack-io/vine/broker/service
+github.com/lack-io/vine/broker/service/proto
+github.com/lack-io/vine/client
+github.com/lack-io/vine/client/grpc
+github.com/lack-io/vine/client/mucp
+github.com/lack-io/vine/client/selector
+github.com/lack-io/vine/client/selector/dns
+github.com/lack-io/vine/client/selector/static
+github.com/lack-io/vine/codec
+github.com/lack-io/vine/codec/bytes
+github.com/lack-io/vine/codec/grpc
+github.com/lack-io/vine/codec/json
+github.com/lack-io/vine/codec/jsonrpc
+github.com/lack-io/vine/codec/proto
+github.com/lack-io/vine/codec/protorpc
+github.com/lack-io/vine/config
+github.com/lack-io/vine/config/cmd
+github.com/lack-io/vine/config/encoder
+github.com/lack-io/vine/config/encoder/hcl
+github.com/lack-io/vine/config/encoder/json
+github.com/lack-io/vine/config/encoder/toml
+github.com/lack-io/vine/config/encoder/yaml
+github.com/lack-io/vine/config/loader
+github.com/lack-io/vine/config/loader/memory
+github.com/lack-io/vine/config/reader
+github.com/lack-io/vine/config/reader/json
+github.com/lack-io/vine/config/source
+github.com/lack-io/vine/config/source/file
+github.com/lack-io/vine/config/source/service
+github.com/lack-io/vine/config/source/service/proto
+github.com/lack-io/vine/debug/profile
+github.com/lack-io/vine/debug/profile/http
+github.com/lack-io/vine/debug/profile/pprof
+github.com/lack-io/vine/debug/stats
+github.com/lack-io/vine/debug/trace
+github.com/lack-io/vine/debug/trace/memory
+github.com/lack-io/vine/errors
+github.com/lack-io/vine/log
+github.com/lack-io/vine/registry
+github.com/lack-io/vine/registry/cache
+github.com/lack-io/vine/registry/mdns
+github.com/lack-io/vine/registry/memory
+github.com/lack-io/vine/registry/service
+github.com/lack-io/vine/registry/service/proto
+github.com/lack-io/vine/runtime
+github.com/lack-io/vine/runtime/local
+github.com/lack-io/vine/runtime/local/build
+github.com/lack-io/vine/runtime/local/git
+github.com/lack-io/vine/runtime/local/process
+github.com/lack-io/vine/runtime/local/process/os
+github.com/lack-io/vine/runtime/local/source
+github.com/lack-io/vine/runtime/service
+github.com/lack-io/vine/runtime/service/proto
+github.com/lack-io/vine/server
+github.com/lack-io/vine/server/grpc
+github.com/lack-io/vine/server/mucp
+github.com/lack-io/vine/store
+github.com/lack-io/vine/store/memory
+github.com/lack-io/vine/store/service
+github.com/lack-io/vine/store/service/proto
+github.com/lack-io/vine/transport
+github.com/lack-io/vine/transport/http
+github.com/lack-io/vine/transport/memory
+github.com/lack-io/vine/util/addr
+github.com/lack-io/vine/util/auth
+github.com/lack-io/vine/util/backoff
+github.com/lack-io/vine/util/buf
+github.com/lack-io/vine/util/jsonpb
+github.com/lack-io/vine/util/mdns
+github.com/lack-io/vine/util/metadata
+github.com/lack-io/vine/util/net
+github.com/lack-io/vine/util/pool
+github.com/lack-io/vine/util/registry
+github.com/lack-io/vine/util/ring
+github.com/lack-io/vine/util/signal
+github.com/lack-io/vine/util/socket
+github.com/lack-io/vine/util/tls
+github.com/lack-io/vine/util/wrapper
+# github.com/miekg/dns v1.1.35
+github.com/miekg/dns
+# github.com/mitchellh/go-homedir v1.1.0
+github.com/mitchellh/go-homedir
+# github.com/mitchellh/hashstructure v1.1.0
+## explicit
+github.com/mitchellh/hashstructure
+# github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
+github.com/modern-go/concurrent
+# github.com/modern-go/reflect2 v1.0.1
+github.com/modern-go/reflect2
+# github.com/nats-io/jwt v1.1.0
+github.com/nats-io/jwt
+# github.com/nats-io/nats.go v1.10.0
+github.com/nats-io/nats.go
+github.com/nats-io/nats.go/encoders/builtin
+github.com/nats-io/nats.go/util
+# github.com/nats-io/nkeys v0.1.4
+github.com/nats-io/nkeys
+# github.com/nats-io/nuid v1.0.1
+github.com/nats-io/nuid
+# github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c
+github.com/oxtoacart/bpool
+# github.com/patrickmn/go-cache v2.1.0+incompatible
+github.com/patrickmn/go-cache
+# github.com/russross/blackfriday/v2 v2.0.1
+github.com/russross/blackfriday/v2
+# github.com/sergi/go-diff v1.1.0
+github.com/sergi/go-diff/diffmatchpatch
+# github.com/shurcooL/sanitized_anchor_name v1.0.0
+github.com/shurcooL/sanitized_anchor_name
+# github.com/xanzy/ssh-agent v0.2.1
+github.com/xanzy/ssh-agent
+# go.uber.org/atomic v1.6.0
+go.uber.org/atomic
+# go.uber.org/multierr v1.5.0
+go.uber.org/multierr
+# go.uber.org/zap v1.16.0
+go.uber.org/zap
+go.uber.org/zap/buffer
+go.uber.org/zap/internal/bufferpool
+go.uber.org/zap/internal/color
+go.uber.org/zap/internal/exit
+go.uber.org/zap/zapcore
+# golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
+golang.org/x/crypto/blowfish
+golang.org/x/crypto/cast5
+golang.org/x/crypto/chacha20
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/openpgp
+golang.org/x/crypto/openpgp/armor
+golang.org/x/crypto/openpgp/elgamal
+golang.org/x/crypto/openpgp/errors
+golang.org/x/crypto/openpgp/packet
+golang.org/x/crypto/openpgp/s2k
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/ssh
+golang.org/x/crypto/ssh/agent
+golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
+golang.org/x/crypto/ssh/knownhosts
+# golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
+golang.org/x/net/bpf
+golang.org/x/net/context
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2
+golang.org/x/net/http2/h2c
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
+golang.org/x/net/internal/socks
+golang.org/x/net/internal/timeseries
+golang.org/x/net/ipv4
+golang.org/x/net/ipv6
+golang.org/x/net/netutil
+golang.org/x/net/proxy
+golang.org/x/net/trace
+# golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f
+golang.org/x/sys/cpu
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
+# golang.org/x/text v0.3.3
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+# google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+google.golang.org/genproto/googleapis/api/annotations
+google.golang.org/genproto/googleapis/rpc/status
+# google.golang.org/grpc v1.34.0
+google.golang.org/grpc
+google.golang.org/grpc/attributes
+google.golang.org/grpc/backoff
+google.golang.org/grpc/balancer
+google.golang.org/grpc/balancer/base
+google.golang.org/grpc/balancer/grpclb/state
+google.golang.org/grpc/balancer/roundrobin
+google.golang.org/grpc/binarylog/grpc_binarylog_v1
+google.golang.org/grpc/codes
+google.golang.org/grpc/connectivity
+google.golang.org/grpc/credentials
+google.golang.org/grpc/encoding
+google.golang.org/grpc/encoding/proto
+google.golang.org/grpc/grpclog
+google.golang.org/grpc/internal
+google.golang.org/grpc/internal/backoff
+google.golang.org/grpc/internal/balancerload
+google.golang.org/grpc/internal/binarylog
+google.golang.org/grpc/internal/buffer
+google.golang.org/grpc/internal/channelz
+google.golang.org/grpc/internal/credentials
+google.golang.org/grpc/internal/envconfig
+google.golang.org/grpc/internal/grpclog
+google.golang.org/grpc/internal/grpcrand
+google.golang.org/grpc/internal/grpcsync
+google.golang.org/grpc/internal/grpcutil
+google.golang.org/grpc/internal/resolver
+google.golang.org/grpc/internal/resolver/dns
+google.golang.org/grpc/internal/resolver/passthrough
+google.golang.org/grpc/internal/resolver/unix
+google.golang.org/grpc/internal/serviceconfig
+google.golang.org/grpc/internal/status
+google.golang.org/grpc/internal/syscall
+google.golang.org/grpc/internal/transport
+google.golang.org/grpc/internal/transport/networktype
+google.golang.org/grpc/keepalive
+google.golang.org/grpc/metadata
+google.golang.org/grpc/peer
+google.golang.org/grpc/resolver
+google.golang.org/grpc/resolver/dns
+google.golang.org/grpc/resolver/passthrough
+google.golang.org/grpc/serviceconfig
+google.golang.org/grpc/stats
+google.golang.org/grpc/status
+google.golang.org/grpc/tap
+# google.golang.org/protobuf v1.25.0
+google.golang.org/protobuf/encoding/prototext
+google.golang.org/protobuf/encoding/protowire
+google.golang.org/protobuf/internal/descfmt
+google.golang.org/protobuf/internal/descopts
+google.golang.org/protobuf/internal/detrand
+google.golang.org/protobuf/internal/encoding/defval
+google.golang.org/protobuf/internal/encoding/messageset
+google.golang.org/protobuf/internal/encoding/tag
+google.golang.org/protobuf/internal/encoding/text
+google.golang.org/protobuf/internal/errors
+google.golang.org/protobuf/internal/fieldsort
+google.golang.org/protobuf/internal/filedesc
+google.golang.org/protobuf/internal/filetype
+google.golang.org/protobuf/internal/flags
+google.golang.org/protobuf/internal/genid
+google.golang.org/protobuf/internal/impl
+google.golang.org/protobuf/internal/mapsort
+google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/set
+google.golang.org/protobuf/internal/strs
+google.golang.org/protobuf/internal/version
+google.golang.org/protobuf/proto
+google.golang.org/protobuf/reflect/protoreflect
+google.golang.org/protobuf/reflect/protoregistry
+google.golang.org/protobuf/runtime/protoiface
+google.golang.org/protobuf/runtime/protoimpl
+google.golang.org/protobuf/types/descriptorpb
+google.golang.org/protobuf/types/known/anypb
+google.golang.org/protobuf/types/known/durationpb
+google.golang.org/protobuf/types/known/timestamppb
+# gopkg.in/fsnotify.v1 v1.4.7
+gopkg.in/fsnotify.v1
+# gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
+gopkg.in/tomb.v1
+# gopkg.in/warnings.v0 v0.1.2
+gopkg.in/warnings.v0
+# gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
+gopkg.in/yaml.v3
