@@ -23,7 +23,7 @@ import (
 
 // NewRegistry returns a new mdns registry
 func NewRegistry(opts ...registry.Option) registry.Registry {
-	return newRegistry(opts...)
+	return registry.NewRegistry(opts...)
 }
 
 // Domain sets the mdnsDomain

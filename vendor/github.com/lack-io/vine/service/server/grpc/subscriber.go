@@ -21,12 +21,12 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/lack-io/vine/internal/context/metadata"
 	"github.com/lack-io/vine/proto/errors"
 	"github.com/lack-io/vine/service/broker"
-	"github.com/lack-io/vine/service/logger"
+	log "github.com/lack-io/vine/service/logger"
 	"github.com/lack-io/vine/service/registry"
 	"github.com/lack-io/vine/service/server"
+	"github.com/lack-io/vine/util/context/metadata"
 )
 
 const (
@@ -178,8 +178,8 @@ func (g *grpcServer) createSubHandler(sb *subscriber, opts server.Options) broke
 
 		defer func() {
 			if r := recover(); r != nil {
-				logger.Error("panic recovered: ", r)
-				logger.Error(string(debug.Stack()))
+				log.Error("panic recovered: ", r)
+				log.Error(string(debug.Stack()))
 				err = errors.InternalServerError(server.DefaultName, "panic recovered: %v", r)
 			}
 		}()
