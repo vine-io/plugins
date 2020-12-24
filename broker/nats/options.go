@@ -17,9 +17,8 @@ package nats
 import (
 	"context"
 
+	"github.com/lack-io/vine/service/broker"
 	nats "github.com/nats-io/nats.go"
-
-	"github.com/lack-io/vine/broker"
 )
 
 type optionsKey struct{}

@@ -17,7 +17,7 @@ package etcd
 import (
 	"context"
 
-	"github.com/lack-io/vine/registry"
+	"github.com/lack-io/vine/service/registry"
 )
 
 type authKey struct {}

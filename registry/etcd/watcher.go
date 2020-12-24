@@ -21,7 +21,7 @@ import (
 
 	"github.com/coreos/etcd/clientv3"
 
-	"github.com/lack-io/vine/registry"
+	"github.com/lack-io/vine/service/registry"
 )
 
 type etcdWatcher struct {

@@ -28,11 +28,10 @@ import (
 	"github.com/coreos/etcd/clientv3"
 	"github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes"
 	json "github.com/json-iterator/go"
-	"github.com/lack-io/vine/config/cmd"
+	"github.com/lack-io/vine/service/config/cmd"
+	log "github.com/lack-io/vine/service/logger"
+	"github.com/lack-io/vine/service/registry"
 	hash "github.com/mitchellh/hashstructure"
-
-	"github.com/lack-io/vine/log"
-	"github.com/lack-io/vine/registry"
 )
 
 var (

@@ -23,7 +23,7 @@ github.com/coreos/etcd/version
 # github.com/coreos/go-semver v0.3.0
 ## explicit
 github.com/coreos/go-semver/semver
-# github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f
+# github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 github.com/coreos/go-systemd/journal
 # github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 ## explicit
@@ -136,102 +136,105 @@ github.com/jbenet/go-context/io
 github.com/json-iterator/go
 # github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd
 github.com/kevinburke/ssh_config
-# github.com/lack-io/cli v0.1.1
+# github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.2.2
+# github.com/lack-io/vine v0.4.0
 ## explicit
-github.com/lack-io/vine/api
-github.com/lack-io/vine/auth
-github.com/lack-io/vine/auth/jwt
-github.com/lack-io/vine/auth/provider
-github.com/lack-io/vine/auth/provider/basic
-github.com/lack-io/vine/auth/provider/oauth
-github.com/lack-io/vine/auth/rules
-github.com/lack-io/vine/auth/service
-github.com/lack-io/vine/auth/service/proto
-github.com/lack-io/vine/auth/token
-github.com/lack-io/vine/auth/token/jwt
-github.com/lack-io/vine/broker
-github.com/lack-io/vine/broker/http
-github.com/lack-io/vine/broker/memory
-github.com/lack-io/vine/broker/service
-github.com/lack-io/vine/broker/service/proto
-github.com/lack-io/vine/client
-github.com/lack-io/vine/client/grpc
-github.com/lack-io/vine/client/mucp
-github.com/lack-io/vine/client/selector
-github.com/lack-io/vine/client/selector/dns
-github.com/lack-io/vine/client/selector/static
-github.com/lack-io/vine/codec
-github.com/lack-io/vine/codec/bytes
-github.com/lack-io/vine/codec/grpc
-github.com/lack-io/vine/codec/json
-github.com/lack-io/vine/codec/jsonrpc
-github.com/lack-io/vine/codec/proto
-github.com/lack-io/vine/codec/protorpc
-github.com/lack-io/vine/config
-github.com/lack-io/vine/config/cmd
-github.com/lack-io/vine/config/encoder
-github.com/lack-io/vine/config/encoder/hcl
-github.com/lack-io/vine/config/encoder/json
-github.com/lack-io/vine/config/encoder/toml
-github.com/lack-io/vine/config/encoder/yaml
-github.com/lack-io/vine/config/loader
-github.com/lack-io/vine/config/loader/memory
-github.com/lack-io/vine/config/reader
-github.com/lack-io/vine/config/reader/json
-github.com/lack-io/vine/config/source
-github.com/lack-io/vine/config/source/file
-github.com/lack-io/vine/config/source/service
-github.com/lack-io/vine/config/source/service/proto
-github.com/lack-io/vine/debug/profile
-github.com/lack-io/vine/debug/profile/http
-github.com/lack-io/vine/debug/profile/pprof
-github.com/lack-io/vine/debug/stats
-github.com/lack-io/vine/debug/trace
-github.com/lack-io/vine/debug/trace/memory
-github.com/lack-io/vine/errors
-github.com/lack-io/vine/log
-github.com/lack-io/vine/registry
-github.com/lack-io/vine/registry/cache
-github.com/lack-io/vine/registry/mdns
-github.com/lack-io/vine/registry/memory
-github.com/lack-io/vine/registry/service
-github.com/lack-io/vine/registry/service/proto
-github.com/lack-io/vine/runtime
-github.com/lack-io/vine/runtime/local
-github.com/lack-io/vine/runtime/local/build
-github.com/lack-io/vine/runtime/local/git
-github.com/lack-io/vine/runtime/local/process
-github.com/lack-io/vine/runtime/local/process/os
-github.com/lack-io/vine/runtime/local/source
-github.com/lack-io/vine/runtime/service
-github.com/lack-io/vine/runtime/service/proto
-github.com/lack-io/vine/server
-github.com/lack-io/vine/server/grpc
-github.com/lack-io/vine/server/mucp
-github.com/lack-io/vine/store
-github.com/lack-io/vine/store/memory
-github.com/lack-io/vine/store/service
-github.com/lack-io/vine/store/service/proto
-github.com/lack-io/vine/transport
-github.com/lack-io/vine/transport/http
-github.com/lack-io/vine/transport/memory
-github.com/lack-io/vine/util/addr
-github.com/lack-io/vine/util/auth
-github.com/lack-io/vine/util/backoff
-github.com/lack-io/vine/util/buf
-github.com/lack-io/vine/util/jsonpb
-github.com/lack-io/vine/util/mdns
-github.com/lack-io/vine/util/metadata
-github.com/lack-io/vine/util/net
-github.com/lack-io/vine/util/pool
-github.com/lack-io/vine/util/registry
-github.com/lack-io/vine/util/ring
-github.com/lack-io/vine/util/signal
-github.com/lack-io/vine/util/socket
-github.com/lack-io/vine/util/tls
-github.com/lack-io/vine/util/wrapper
+github.com/lack-io/vine/internal/addr
+github.com/lack-io/vine/internal/auth
+github.com/lack-io/vine/internal/auth/jwt
+github.com/lack-io/vine/internal/auth/provider
+github.com/lack-io/vine/internal/auth/provider/basic
+github.com/lack-io/vine/internal/auth/provider/oauth
+github.com/lack-io/vine/internal/auth/rules
+github.com/lack-io/vine/internal/auth/token
+github.com/lack-io/vine/internal/auth/token/jwt
+github.com/lack-io/vine/internal/backoff
+github.com/lack-io/vine/internal/client/buf
+github.com/lack-io/vine/internal/client/pool
+github.com/lack-io/vine/internal/codec
+github.com/lack-io/vine/internal/codec/bytes
+github.com/lack-io/vine/internal/codec/grpc
+github.com/lack-io/vine/internal/codec/json
+github.com/lack-io/vine/internal/codec/jsonrpc
+github.com/lack-io/vine/internal/codec/proto
+github.com/lack-io/vine/internal/codec/protorpc
+github.com/lack-io/vine/internal/context/metadata
+github.com/lack-io/vine/internal/debug/log
+github.com/lack-io/vine/internal/debug/profile
+github.com/lack-io/vine/internal/debug/profile/http
+github.com/lack-io/vine/internal/debug/profile/pprof
+github.com/lack-io/vine/internal/debug/stats
+github.com/lack-io/vine/internal/debug/trace
+github.com/lack-io/vine/internal/debug/trace/memory
+github.com/lack-io/vine/internal/jsonpb
+github.com/lack-io/vine/internal/mdns
+github.com/lack-io/vine/internal/net
+github.com/lack-io/vine/internal/network/transport
+github.com/lack-io/vine/internal/network/transport/http
+github.com/lack-io/vine/internal/network/transport/memory
+github.com/lack-io/vine/internal/registry
+github.com/lack-io/vine/internal/ring
+github.com/lack-io/vine/internal/signal
+github.com/lack-io/vine/internal/socket
+github.com/lack-io/vine/internal/tls
+github.com/lack-io/vine/internal/wrapper
+github.com/lack-io/vine/proto/auth
+github.com/lack-io/vine/proto/broker
+github.com/lack-io/vine/proto/config
+github.com/lack-io/vine/proto/errors
+github.com/lack-io/vine/proto/registry
+github.com/lack-io/vine/proto/runtime
+github.com/lack-io/vine/proto/store
+github.com/lack-io/vine/service/api
+github.com/lack-io/vine/service/auth
+github.com/lack-io/vine/service/auth/grpc
+github.com/lack-io/vine/service/broker
+github.com/lack-io/vine/service/broker/grpc
+github.com/lack-io/vine/service/broker/http
+github.com/lack-io/vine/service/broker/memory
+github.com/lack-io/vine/service/client
+github.com/lack-io/vine/service/client/grpc
+github.com/lack-io/vine/service/client/mucp
+github.com/lack-io/vine/service/client/selector
+github.com/lack-io/vine/service/client/selector/dns
+github.com/lack-io/vine/service/client/selector/registry
+github.com/lack-io/vine/service/client/selector/static
+github.com/lack-io/vine/service/config
+github.com/lack-io/vine/service/config/cmd
+github.com/lack-io/vine/service/config/encoder
+github.com/lack-io/vine/service/config/encoder/hcl
+github.com/lack-io/vine/service/config/encoder/json
+github.com/lack-io/vine/service/config/encoder/toml
+github.com/lack-io/vine/service/config/encoder/yaml
+github.com/lack-io/vine/service/config/loader
+github.com/lack-io/vine/service/config/loader/memory
+github.com/lack-io/vine/service/config/reader
+github.com/lack-io/vine/service/config/reader/json
+github.com/lack-io/vine/service/config/source
+github.com/lack-io/vine/service/config/source/file
+github.com/lack-io/vine/service/config/source/service
+github.com/lack-io/vine/service/logger
+github.com/lack-io/vine/service/registry
+github.com/lack-io/vine/service/registry/cache
+github.com/lack-io/vine/service/registry/grpc
+github.com/lack-io/vine/service/registry/mdns
+github.com/lack-io/vine/service/registry/memory
+github.com/lack-io/vine/service/runtime
+github.com/lack-io/vine/service/runtime/grpc
+github.com/lack-io/vine/service/runtime/local
+github.com/lack-io/vine/service/runtime/local/build
+github.com/lack-io/vine/service/runtime/local/git
+github.com/lack-io/vine/service/runtime/local/process
+github.com/lack-io/vine/service/runtime/local/process/os
+github.com/lack-io/vine/service/runtime/local/source
+github.com/lack-io/vine/service/server
+github.com/lack-io/vine/service/server/grpc
+github.com/lack-io/vine/service/server/mucp
+github.com/lack-io/vine/service/store
+github.com/lack-io/vine/service/store/bolt
+github.com/lack-io/vine/service/store/grpc
+github.com/lack-io/vine/service/store/memory
 # github.com/miekg/dns v1.1.35
 github.com/miekg/dns
 # github.com/mitchellh/go-homedir v1.1.0
@@ -266,11 +269,14 @@ github.com/sergi/go-diff/diffmatchpatch
 github.com/shurcooL/sanitized_anchor_name
 # github.com/xanzy/ssh-agent v0.2.1
 github.com/xanzy/ssh-agent
+# go.etcd.io/bbolt v1.3.5
+go.etcd.io/bbolt
 # go.uber.org/atomic v1.6.0
 go.uber.org/atomic
 # go.uber.org/multierr v1.5.0
 go.uber.org/multierr
 # go.uber.org/zap v1.16.0
+## explicit
 go.uber.org/zap
 go.uber.org/zap/buffer
 go.uber.org/zap/internal/bufferpool
