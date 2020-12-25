@@ -143,7 +143,7 @@ github.com/juju/ratelimit
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.4.4
+# github.com/lack-io/vine v0.4.5
 ## explicit
 github.com/lack-io/vine/proto/auth
 github.com/lack-io/vine/proto/broker
@@ -155,6 +155,13 @@ github.com/lack-io/vine/proto/transport
 github.com/lack-io/vine/service/api
 github.com/lack-io/vine/service/auth
 github.com/lack-io/vine/service/auth/grpc
+github.com/lack-io/vine/service/auth/jwt
+github.com/lack-io/vine/service/auth/provider
+github.com/lack-io/vine/service/auth/provider/basic
+github.com/lack-io/vine/service/auth/provider/oauth
+github.com/lack-io/vine/service/auth/rules
+github.com/lack-io/vine/service/auth/token
+github.com/lack-io/vine/service/auth/token/jwt
 github.com/lack-io/vine/service/broker
 github.com/lack-io/vine/service/broker/grpc
 github.com/lack-io/vine/service/broker/http
@@ -165,6 +172,13 @@ github.com/lack-io/vine/service/client/mucp
 github.com/lack-io/vine/service/client/selector
 github.com/lack-io/vine/service/client/selector/dns
 github.com/lack-io/vine/service/client/selector/static
+github.com/lack-io/vine/service/codec
+github.com/lack-io/vine/service/codec/bytes
+github.com/lack-io/vine/service/codec/grpc
+github.com/lack-io/vine/service/codec/json
+github.com/lack-io/vine/service/codec/jsonrpc
+github.com/lack-io/vine/service/codec/proto
+github.com/lack-io/vine/service/codec/protorpc
 github.com/lack-io/vine/service/config
 github.com/lack-io/vine/service/config/cmd
 github.com/lack-io/vine/service/config/encoder
@@ -179,7 +193,19 @@ github.com/lack-io/vine/service/config/reader/json
 github.com/lack-io/vine/service/config/source
 github.com/lack-io/vine/service/config/source/file
 github.com/lack-io/vine/service/config/source/service
+github.com/lack-io/vine/service/debug/log
+github.com/lack-io/vine/service/debug/profile
+github.com/lack-io/vine/service/debug/profile/http
+github.com/lack-io/vine/service/debug/profile/pprof
+github.com/lack-io/vine/service/debug/stats
+github.com/lack-io/vine/service/debug/trace
+github.com/lack-io/vine/service/debug/trace/memory
 github.com/lack-io/vine/service/logger
+github.com/lack-io/vine/service/network/transport
+github.com/lack-io/vine/service/network/transport/grpc
+github.com/lack-io/vine/service/network/transport/http
+github.com/lack-io/vine/service/network/transport/memory
+github.com/lack-io/vine/service/network/transport/quic
 github.com/lack-io/vine/service/registry
 github.com/lack-io/vine/service/registry/cache
 github.com/lack-io/vine/service/registry/grpc
@@ -202,39 +228,13 @@ github.com/lack-io/vine/service/store/grpc
 github.com/lack-io/vine/service/store/memory
 github.com/lack-io/vine/util/addr
 github.com/lack-io/vine/util/auth
-github.com/lack-io/vine/util/auth/jwt
-github.com/lack-io/vine/util/auth/provider
-github.com/lack-io/vine/util/auth/provider/basic
-github.com/lack-io/vine/util/auth/provider/oauth
-github.com/lack-io/vine/util/auth/rules
-github.com/lack-io/vine/util/auth/token
-github.com/lack-io/vine/util/auth/token/jwt
 github.com/lack-io/vine/util/backoff
 github.com/lack-io/vine/util/client/buf
 github.com/lack-io/vine/util/client/pool
-github.com/lack-io/vine/util/codec
-github.com/lack-io/vine/util/codec/bytes
-github.com/lack-io/vine/util/codec/grpc
-github.com/lack-io/vine/util/codec/json
-github.com/lack-io/vine/util/codec/jsonrpc
-github.com/lack-io/vine/util/codec/proto
-github.com/lack-io/vine/util/codec/protorpc
 github.com/lack-io/vine/util/context/metadata
-github.com/lack-io/vine/util/debug/log
-github.com/lack-io/vine/util/debug/profile
-github.com/lack-io/vine/util/debug/profile/http
-github.com/lack-io/vine/util/debug/profile/pprof
-github.com/lack-io/vine/util/debug/stats
-github.com/lack-io/vine/util/debug/trace
-github.com/lack-io/vine/util/debug/trace/memory
 github.com/lack-io/vine/util/jsonpb
 github.com/lack-io/vine/util/mdns
 github.com/lack-io/vine/util/net
-github.com/lack-io/vine/util/network/transport
-github.com/lack-io/vine/util/network/transport/grpc
-github.com/lack-io/vine/util/network/transport/http
-github.com/lack-io/vine/util/network/transport/memory
-github.com/lack-io/vine/util/network/transport/quic
 github.com/lack-io/vine/util/registry
 github.com/lack-io/vine/util/ring
 github.com/lack-io/vine/util/signal

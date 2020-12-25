@@ -308,8 +308,8 @@ github.com/labbsr0x/bindman-dns-webhook v1.0.2/go.mod h1:p6b+VCXIR8NYKpDr8/dg1HK
 github.com/labbsr0x/goh v1.0.1/go.mod h1:8K2UhVoaWXcCU7Lxoa2omWnC8gyW8px7/lmO61c027w=
 github.com/lack-io/cli v1.0.2 h1:gaW8kVC1y0fWoUQX/s/e234uxMLMXocIw8h2c+vTFpA=
 github.com/lack-io/cli v1.0.2/go.mod h1:RO7Udy97CJapM06eWztYk2CLVSXwxdmur7y60vpSC0M=
-github.com/lack-io/vine v0.4.4 h1:fSF8/VbHyTbjQH3lcLEkqAnknAuhbd4boVrOaAwGUXw=
-github.com/lack-io/vine v0.4.4/go.mod h1:zIcHf67Q6FNjmw8PBLKJ1eBjcKGQR8YHiOywLAbbmTM=
+github.com/lack-io/vine v0.4.5 h1:qWE6J+66GbgdAy7fdbvG9Egldr9bSmMNlOjA+8PQOfM=
+github.com/lack-io/vine v0.4.5/go.mod h1:zIcHf67Q6FNjmw8PBLKJ1eBjcKGQR8YHiOywLAbbmTM=
 github.com/lib/pq v1.9.0/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/linode/linodego v0.10.0/go.mod h1:cziNP7pbvE3mXIPneHj0oRY8L1WtGEIKlZ8LANE4eXA=
 github.com/liquidweb/liquidweb-go v1.6.0/go.mod h1:UDcVnAMDkZxpw4Y7NOHkqoeiGacVLEIG/i5J9cyixzQ=

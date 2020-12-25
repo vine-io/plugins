@@ -15,7 +15,7 @@ package http
 
 import (
 	"github.com/lack-io/vine/service/config/cmd"
-	"github.com/lack-io/vine/util/network/transport"
+	"github.com/lack-io/vine/service/network/transport"
 )
 
 func init() {

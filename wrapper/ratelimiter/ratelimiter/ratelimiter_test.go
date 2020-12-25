@@ -27,7 +27,7 @@ import (
 	rmemory "github.com/lack-io/vine/service/registry/memory"
 	"github.com/lack-io/vine/service/server"
 	gserver "github.com/lack-io/vine/service/server/mucp"
-	tmemory "github.com/lack-io/vine/util/network/transport/memory"
+	tmemory "github.com/lack-io/vine/service/network/transport/memory"
 )
 
 type testHandler struct{}

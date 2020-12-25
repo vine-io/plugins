@@ -9,7 +9,7 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/json-iterator/go v1.1.10
 	github.com/juju/ratelimit v1.0.1
-	github.com/lack-io/vine v0.4.4
+	github.com/lack-io/vine v0.4.5
 	github.com/mitchellh/hashstructure v1.1.0
 	github.com/nats-io/nats.go v1.10.0
 	go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
