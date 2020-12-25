@@ -18,9 +18,8 @@ import (
 
 	"github.com/juju/ratelimit"
 	"github.com/lack-io/vine/proto/errors"
-	"github.com/lack-io/vine/service/server"
-
 	"github.com/lack-io/vine/service/client"
+	"github.com/lack-io/vine/service/server"
 )
 
 type clientWrapper struct {
