@@ -28,10 +28,6 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-func init() {
-	cmd.DefaultBrokers["nats"] = NewBroker
-}
-
 type natsBroker struct {
 	sync.Once
 	sync.RWMutex
@@ -58,6 +54,10 @@ type publication struct {
 	t   string
 	err error
 	m   *broker.Message
+}
+
+func init() {
+	cmd.DefaultBrokers["nats"] = NewBroker
 }
 
 func (p *publication) Topic() string {

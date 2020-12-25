@@ -18,7 +18,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/lack-io/vine/proto/errors"
-	"github.com/lack-io/vine/service/client"
 )
 
 func vineError(err error) error {
@@ -39,9 +38,9 @@ func vineError(err error) error {
 	}
 
 	// return first error from details
-	if details := s.Details(); len(details) > 0 {
-		return vineError(details[0].(error))
-	}
+	//if details := s.Details(); len(details) > 0 {
+	//	return vineError(details[0].(error))
+	//}
 
 	// try to decode vine *errors.Error
 	if e := errors.Parse(s.Message()); e.Code > 0 {
@@ -49,5 +48,5 @@ func vineError(err error) error {
 	}
 
 	// fallback
-	return errors.InternalServerError(client.DefaultName, s.Message())
+	return errors.InternalServerError("go.vine.client", s.Message())
 }

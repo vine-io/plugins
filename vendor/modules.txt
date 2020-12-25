@@ -2,6 +2,8 @@
 github.com/BurntSushi/toml
 # github.com/bitly/go-simplejson v0.5.0
 github.com/bitly/go-simplejson
+# github.com/cheekybits/genny v1.0.0
+github.com/cheekybits/genny/generic
 # github.com/coreos/etcd v3.3.25+incompatible
 ## explicit
 github.com/coreos/etcd/auth/authpb
@@ -141,7 +143,7 @@ github.com/juju/ratelimit
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.4.2
+# github.com/lack-io/vine v0.4.4
 ## explicit
 github.com/lack-io/vine/proto/auth
 github.com/lack-io/vine/proto/broker
@@ -149,6 +151,7 @@ github.com/lack-io/vine/proto/config
 github.com/lack-io/vine/proto/errors
 github.com/lack-io/vine/proto/registry
 github.com/lack-io/vine/proto/store
+github.com/lack-io/vine/proto/transport
 github.com/lack-io/vine/service/api
 github.com/lack-io/vine/service/auth
 github.com/lack-io/vine/service/auth/grpc
@@ -228,14 +231,35 @@ github.com/lack-io/vine/util/jsonpb
 github.com/lack-io/vine/util/mdns
 github.com/lack-io/vine/util/net
 github.com/lack-io/vine/util/network/transport
+github.com/lack-io/vine/util/network/transport/grpc
 github.com/lack-io/vine/util/network/transport/http
 github.com/lack-io/vine/util/network/transport/memory
+github.com/lack-io/vine/util/network/transport/quic
 github.com/lack-io/vine/util/registry
 github.com/lack-io/vine/util/ring
 github.com/lack-io/vine/util/signal
 github.com/lack-io/vine/util/socket
 github.com/lack-io/vine/util/tls
 github.com/lack-io/vine/util/wrapper
+# github.com/lucas-clemente/quic-go v0.19.3
+github.com/lucas-clemente/quic-go
+github.com/lucas-clemente/quic-go/internal/ackhandler
+github.com/lucas-clemente/quic-go/internal/congestion
+github.com/lucas-clemente/quic-go/internal/flowcontrol
+github.com/lucas-clemente/quic-go/internal/handshake
+github.com/lucas-clemente/quic-go/internal/logutils
+github.com/lucas-clemente/quic-go/internal/protocol
+github.com/lucas-clemente/quic-go/internal/qerr
+github.com/lucas-clemente/quic-go/internal/qtls
+github.com/lucas-clemente/quic-go/internal/utils
+github.com/lucas-clemente/quic-go/internal/wire
+github.com/lucas-clemente/quic-go/logging
+github.com/lucas-clemente/quic-go/quictrace
+github.com/lucas-clemente/quic-go/quictrace/pb
+# github.com/marten-seemann/qtls v0.10.0
+github.com/marten-seemann/qtls
+# github.com/marten-seemann/qtls-go1-15 v0.1.1
+github.com/marten-seemann/qtls-go1-15
 # github.com/miekg/dns v1.1.35
 github.com/miekg/dns
 # github.com/mitchellh/go-homedir v1.1.0
@@ -292,9 +316,13 @@ go.uber.org/zap/zapcore
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/cast5
 golang.org/x/crypto/chacha20
+golang.org/x/crypto/chacha20poly1305
+golang.org/x/crypto/cryptobyte
+golang.org/x/crypto/cryptobyte/asn1
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/ed25519
 golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/hkdf
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/openpgp/armor
