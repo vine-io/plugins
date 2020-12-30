@@ -98,7 +98,6 @@ github.com/go-git/go-git/v5/utils/merkletrie/index
 github.com/go-git/go-git/v5/utils/merkletrie/internal/frame
 github.com/go-git/go-git/v5/utils/merkletrie/noder
 # github.com/gogo/protobuf v1.3.1
-## explicit
 github.com/gogo/protobuf/gogoproto
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
@@ -143,7 +142,7 @@ github.com/juju/ratelimit
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.5.0
+# github.com/lack-io/vine v0.6.1
 ## explicit
 github.com/lack-io/vine/proto/auth
 github.com/lack-io/vine/proto/broker
@@ -300,7 +299,7 @@ go.etcd.io/bbolt
 go.uber.org/atomic
 # go.uber.org/multierr v1.5.0
 go.uber.org/multierr
-# go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
+# go.uber.org/ratelimit v0.1.0
 ## explicit
 go.uber.org/ratelimit
 go.uber.org/ratelimit/internal/clock
