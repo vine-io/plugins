@@ -26,4 +26,3 @@ func init() {
 func NewTransport(opts ...transport.Option) transport.Transport {
 	return transport.NewTransport(opts...)
 }
-
