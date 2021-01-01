@@ -17,6 +17,7 @@ package redis
 import (
 	"context"
 	"errors"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/lack-io/vine/service/broker"
 	"github.com/lack-io/vine/service/codec"
