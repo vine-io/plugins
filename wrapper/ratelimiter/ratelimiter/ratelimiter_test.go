@@ -24,10 +24,10 @@ import (
 	"github.com/lack-io/vine/service/client"
 	gclient "github.com/lack-io/vine/service/client/mucp"
 	"github.com/lack-io/vine/service/client/selector"
+	tmemory "github.com/lack-io/vine/service/network/transport/memory"
 	rmemory "github.com/lack-io/vine/service/registry/memory"
 	"github.com/lack-io/vine/service/server"
 	gserver "github.com/lack-io/vine/service/server/mucp"
-	tmemory "github.com/lack-io/vine/service/network/transport/memory"
 )
 
 type testHandler struct{}
@@ -88,7 +88,6 @@ func TestRateServerLimit(t *testing.T) {
 		r := rmemory.NewRegistry()
 		b := bmemory.NewBroker()
 		tr := tmemory.NewTransport()
-		_ = b
 		s := selector.NewSelector(selector.Registry(r))
 
 		br := ratelimit.NewBucketWithRate(float64(limit), int64(limit))
@@ -102,7 +101,7 @@ func TestRateServerLimit(t *testing.T) {
 			server.Registry(r),
 			server.Transport(tr),
 			// add broker
-			//server.Broker(b),
+			server.Broker(b),
 			// add the breaker wrapper
 			server.WrapHandler(NewHandlerWrapper(br, false)),
 		)
