@@ -5,7 +5,6 @@ github.com/bitly/go-simplejson
 # github.com/cheekybits/genny v1.0.0
 github.com/cheekybits/genny/generic
 # github.com/coreos/etcd v3.3.25+incompatible
-## explicit
 github.com/coreos/etcd/auth/authpb
 github.com/coreos/etcd/clientv3
 github.com/coreos/etcd/clientv3/balancer
@@ -23,12 +22,10 @@ github.com/coreos/etcd/raft
 github.com/coreos/etcd/raft/raftpb
 github.com/coreos/etcd/version
 # github.com/coreos/go-semver v0.3.0
-## explicit
 github.com/coreos/go-semver/semver
 # github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 github.com/coreos/go-systemd/journal
 # github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-## explicit
 github.com/coreos/pkg/capnslog
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 github.com/cpuguy83/go-md2man/v2/md2man
@@ -133,7 +130,6 @@ github.com/imdario/mergo
 # github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99
 github.com/jbenet/go-context/io
 # github.com/json-iterator/go v1.1.10
-## explicit
 github.com/json-iterator/go
 # github.com/juju/ratelimit v1.0.1
 ## explicit
@@ -142,7 +138,7 @@ github.com/juju/ratelimit
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.6.1
+# github.com/lack-io/vine v0.7.1
 ## explicit
 github.com/lack-io/vine/proto/auth
 github.com/lack-io/vine/proto/broker
@@ -207,6 +203,7 @@ github.com/lack-io/vine/service/network/transport/memory
 github.com/lack-io/vine/service/network/transport/quic
 github.com/lack-io/vine/service/registry
 github.com/lack-io/vine/service/registry/cache
+github.com/lack-io/vine/service/registry/etcd
 github.com/lack-io/vine/service/registry/grpc
 github.com/lack-io/vine/service/registry/mdns
 github.com/lack-io/vine/service/registry/memory
@@ -264,7 +261,6 @@ github.com/miekg/dns
 # github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/hashstructure v1.1.0
-## explicit
 github.com/mitchellh/hashstructure
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
@@ -304,7 +300,6 @@ go.uber.org/multierr
 go.uber.org/ratelimit
 go.uber.org/ratelimit/internal/clock
 # go.uber.org/zap v1.16.0
-## explicit
 go.uber.org/zap
 go.uber.org/zap/buffer
 go.uber.org/zap/internal/bufferpool
