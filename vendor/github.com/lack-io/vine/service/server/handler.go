@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
 
 package server
 
-import "context"
+import (
+	"context"
+
+	regpb "github.com/lack-io/vine/proto/registry"
+)
 
 type HandlerOption func(*HandlerOptions)
 
 type HandlerOptions struct {
 	Internal bool
 	Metadata map[string]map[string]string
+	OpenAPI  *regpb.OpenAPI
 }
 
 type SubscriberOption func(*SubscriberOptions)
@@ -39,6 +44,14 @@ type SubscriberOptions struct {
 func EndpointMetadata(name string, md map[string]string) HandlerOption {
 	return func(o *HandlerOptions) {
 		o.Metadata[name] = md
+	}
+}
+
+// OpenAPIHandler is a Handler option that allows swagger openapi to be added to
+// individual endpoints.
+func OpenAPIHandler(openAPI *regpb.OpenAPI) HandlerOption {
+	return func(o *HandlerOptions) {
+		o.OpenAPI = openAPI
 	}
 }
 

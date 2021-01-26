@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -180,7 +180,46 @@ func IPs() []string {
 				if ip == nil {
 					continue
 				}
-			 */
+			*/
+
+			ipAddrs = append(ipAddrs, ip.String())
+		}
+	}
+
+	return ipAddrs
+}
+
+func IPv4s() []string {
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return nil
+	}
+
+	var ipAddrs []string
+
+	for _, i := range ifaces {
+		addrs, err := i.Addrs()
+		if err != nil {
+			continue
+		}
+
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+
+			if ip == nil {
+				continue
+			}
+
+			ip = ip.To4()
+			if ip == nil {
+				continue
+			}
 
 			ipAddrs = append(ipAddrs, ip.String())
 		}

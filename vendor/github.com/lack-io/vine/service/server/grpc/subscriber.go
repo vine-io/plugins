@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import (
 	"strings"
 
 	"github.com/lack-io/vine/proto/errors"
+	regpb "github.com/lack-io/vine/proto/registry"
 	"github.com/lack-io/vine/service/broker"
 	log "github.com/lack-io/vine/service/logger"
-	"github.com/lack-io/vine/service/registry"
 	"github.com/lack-io/vine/service/server"
 	"github.com/lack-io/vine/util/context/metadata"
 )
@@ -45,7 +45,7 @@ type subscriber struct {
 	typ        reflect.Type
 	subscriber interface{}
 	handlers   []*handler
-	endpoints  []*registry.Endpoint
+	endpoints  []*regpb.Endpoint
 	opts       server.SubscriberOptions
 }
 
@@ -56,7 +56,7 @@ func newSubscriber(topic string, sub interface{}, opts ...server.SubscriberOptio
 		o(&options)
 	}
 
-	var endpoints []*registry.Endpoint
+	var endpoints []*regpb.Endpoint
 	var handlers []*handler
 
 	if typ := reflect.TypeOf(sub); typ.Kind() == reflect.Func {
@@ -72,7 +72,7 @@ func newSubscriber(topic string, sub interface{}, opts ...server.SubscriberOptio
 
 		handlers = append(handlers, h)
 
-		endpoints = append(endpoints, &registry.Endpoint{
+		endpoints = append(endpoints, &regpb.Endpoint{
 			Name:    "Func",
 			Request: extractSubValue(typ),
 			Metadata: map[string]string{
@@ -98,7 +98,7 @@ func newSubscriber(topic string, sub interface{}, opts ...server.SubscriberOptio
 
 			handlers = append(handlers, h)
 
-			endpoints = append(endpoints, &registry.Endpoint{
+			endpoints = append(endpoints, &regpb.Endpoint{
 				Name:    name + "." + method.Name,
 				Request: extractSubValue(method.Type),
 				Metadata: map[string]string{
@@ -291,7 +291,7 @@ func (s *subscriber) Subscriber() interface{} {
 	return s.subscriber
 }
 
-func (s *subscriber) Endpoints() []*registry.Endpoint {
+func (s *subscriber) Endpoints() []*regpb.Endpoint {
 	return s.endpoints
 }
 

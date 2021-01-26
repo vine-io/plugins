@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@ package memory
 import (
 	"context"
 
+	regpb "github.com/lack-io/vine/proto/registry"
 	"github.com/lack-io/vine/service/registry"
 )
 
 type serviceKey struct{}
 
 func getServiceRecords(ctx context.Context) map[string]map[string]*record {
-	memServices, ok := ctx.Value(serviceKey{}).(map[string][]*registry.Service)
+	memServices, ok := ctx.Value(serviceKey{}).(map[string][]*regpb.Service)
 	if !ok {
 		return nil
 	}
@@ -44,7 +45,7 @@ func getServiceRecords(ctx context.Context) map[string]map[string]*record {
 }
 
 // Services is an option that preloads service data
-func Services(s map[string][]*registry.Service) registry.Option {
+func Services(s map[string][]*regpb.Service) registry.Option {
 	return func(o *registry.Options) {
 		if o.Context == nil {
 			o.Context = context.Background()

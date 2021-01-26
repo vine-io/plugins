@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package memory
 import (
 	"time"
 
-	"github.com/lack-io/vine/service/registry"
+	regpb "github.com/lack-io/vine/proto/registry"
 )
 
-func serviceToRecord(s *registry.Service, ttl time.Duration) *record {
+func serviceToRecord(s *regpb.Service, ttl time.Duration) *record {
 	metadata := make(map[string]string, len(s.Metadata))
 	for k, v := range s.Metadata {
 		metadata[k] = v
@@ -35,7 +35,7 @@ func serviceToRecord(s *registry.Service, ttl time.Duration) *record {
 		}
 	}
 
-	endpoints := make([]*registry.Endpoint, len(s.Endpoints))
+	endpoints := make([]*regpb.Endpoint, len(s.Endpoints))
 	for i, e := range s.Endpoints {
 		endpoints[i] = e
 	}
@@ -46,22 +46,23 @@ func serviceToRecord(s *registry.Service, ttl time.Duration) *record {
 		Metadata:  metadata,
 		Nodes:     nodes,
 		Endpoints: endpoints,
+		Apis:      s.Apis,
 	}
 }
 
-func recordToService(r *record) *registry.Service {
+func recordToService(r *record) *regpb.Service {
 	metadata := make(map[string]string, len(r.Metadata))
 	for k, v := range r.Metadata {
 		metadata[k] = v
 	}
 
-	endpoints := make([]*registry.Endpoint, len(r.Endpoints))
+	endpoints := make([]*regpb.Endpoint, len(r.Endpoints))
 	for i, e := range r.Endpoints {
-		request := new(registry.Value)
+		request := new(regpb.Value)
 		if e.Request != nil {
 			*request = *e.Request
 		}
-		response := new(registry.Value)
+		response := new(regpb.Value)
 		if e.Response != nil {
 			*response = *e.Response
 		}
@@ -71,7 +72,7 @@ func recordToService(r *record) *registry.Service {
 			metadata[k] = v
 		}
 
-		endpoints[i] = &registry.Endpoint{
+		endpoints[i] = &regpb.Endpoint{
 			Name:     e.Name,
 			Request:  request,
 			Response: response,
@@ -79,7 +80,7 @@ func recordToService(r *record) *registry.Service {
 		}
 	}
 
-	nodes := make([]*registry.Node, len(r.Nodes))
+	nodes := make([]*regpb.Node, len(r.Nodes))
 	i := 0
 	for _, n := range r.Nodes {
 		metadata := make(map[string]string, len(n.Metadata))
@@ -87,7 +88,7 @@ func recordToService(r *record) *registry.Service {
 			metadata[k] = v
 		}
 
-		nodes[i] = &registry.Node{
+		nodes[i] = &regpb.Node{
 			Id:       n.Id,
 			Address:  n.Address,
 			Metadata: metadata,
@@ -95,11 +96,12 @@ func recordToService(r *record) *registry.Service {
 		i++
 	}
 
-	return &registry.Service{
+	return &regpb.Service{
 		Name:      r.Name,
 		Version:   r.Version,
 		Metadata:  metadata,
 		Endpoints: endpoints,
 		Nodes:     nodes,
+		Apis:      r.Apis,
 	}
 }

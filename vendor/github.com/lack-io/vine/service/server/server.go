@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import (
 
 	"github.com/google/uuid"
 
+	regpb "github.com/lack-io/vine/proto/registry"
 	"github.com/lack-io/vine/service/codec"
 	log "github.com/lack-io/vine/service/logger"
-	"github.com/lack-io/vine/service/registry"
 	signalutil "github.com/lack-io/vine/util/signal"
 )
 
@@ -134,7 +134,7 @@ type Stream interface {
 type Handler interface {
 	Name() string
 	Handler() interface{}
-	Endpoints() []*registry.Endpoint
+	Endpoints() []*regpb.Endpoint
 	Options() HandlerOptions
 }
 
@@ -144,7 +144,7 @@ type Handler interface {
 type Subscriber interface {
 	Topic() string
 	Subscriber() interface{}
-	Endpoints() []*registry.Endpoint
+	Endpoints() []*regpb.Endpoint
 	Options() SubscriberOptions
 }
 

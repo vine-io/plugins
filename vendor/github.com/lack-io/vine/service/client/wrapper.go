@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ package client
 import (
 	"context"
 
-	"github.com/lack-io/vine/service/registry"
+	regpb "github.com/lack-io/vine/proto/registry"
 )
 
 // CallFunc represents the individual call func
-type CallFunc func(ctx context.Context, node *registry.Node, req Request, rsp interface{}, opts CallOptions) error
+type CallFunc func(ctx context.Context, node *regpb.Node, req Request, rsp interface{}, opts CallOptions) error
 
 // CallWrapper is a low level wrapper for the CallFunc
 type CallWrapper func(CallFunc) CallFunc

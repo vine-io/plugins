@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/lack-io/vine/service/registry"
+	regpb "github.com/lack-io/vine/proto/registry"
 	"github.com/lack-io/vine/service/server"
 )
 
@@ -69,7 +69,7 @@ type Service struct {
 	// The endpoint for this service
 	Endpoint *Endpoint
 	// Versions of this service
-	Services []*registry.Service
+	Services []*regpb.Service
 }
 
 func strip(s string) string {
@@ -81,7 +81,7 @@ func slice(s string) []string {
 
 	for _, p := range strings.Split(s, ",") {
 		if str := strip(p); len(str) > 0 {
-			sl = append(sl, strip(p))
+			sl = append(sl, str)
 		}
 	}
 

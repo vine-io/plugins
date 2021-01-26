@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import (
 	"github.com/google/uuid"
 	json "github.com/json-iterator/go"
 
+	regpb "github.com/lack-io/vine/proto/registry"
 	log "github.com/lack-io/vine/service/logger"
 	"github.com/lack-io/vine/util/mdns"
 )
@@ -42,8 +43,10 @@ var (
 type mdnsTxt struct {
 	Service   string
 	Version   string
-	Endpoints []*Endpoint
+	node      []*regpb.Node
+	Endpoints []*regpb.Endpoint
 	Metadata  map[string]string
+	Apis      []*regpb.OpenAPI
 }
 
 type mdnsEntry struct {
@@ -179,7 +182,7 @@ func (m *mdnsRegistry) Options() Options {
 	return m.opts
 }
 
-func (m *mdnsRegistry) Register(service *Service, opts ...RegisterOption) error {
+func (m *mdnsRegistry) Register(service *regpb.Service, opts ...RegisterOption) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -234,7 +237,9 @@ func (m *mdnsRegistry) Register(service *Service, opts ...RegisterOption) error 
 			Service:   service.Name,
 			Version:   service.Version,
 			Endpoints: service.Endpoints,
+			node:      service.Nodes,
 			Metadata:  node.Metadata,
+			Apis:      service.Apis,
 		})
 
 		if err != nil {
@@ -283,7 +288,7 @@ func (m *mdnsRegistry) Register(service *Service, opts ...RegisterOption) error 
 	return gerr
 }
 
-func (m *mdnsRegistry) Deregister(service *Service, opts ...DeregisterOption) error {
+func (m *mdnsRegistry) Deregister(service *regpb.Service, opts ...DeregisterOption) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -318,8 +323,8 @@ func (m *mdnsRegistry) Deregister(service *Service, opts ...DeregisterOption) er
 	return nil
 }
 
-func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*Service, error) {
-	serviceMap := make(map[string]*Service)
+func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*regpb.Service, error) {
+	serviceMap := make(map[string]*regpb.Service)
 	entries := make(chan *mdns.ServiceEntry, 10)
 	done := make(chan bool)
 
@@ -359,10 +364,13 @@ func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*Service
 
 				s, ok := serviceMap[txt.Version]
 				if !ok {
-					s = &Service{
+					s = &regpb.Service{
 						Name:      txt.Service,
 						Version:   txt.Version,
+						Metadata:  txt.Metadata,
+						Nodes:     txt.node,
 						Endpoints: txt.Endpoints,
+						Apis:      txt.Apis,
 					}
 				}
 				addr := ""
@@ -376,7 +384,7 @@ func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*Service
 					log.Infof("[mdns]: invalid endpoint received: %v", e)
 					continue
 				}
-				s.Nodes = append(s.Nodes, &Node{
+				s.Nodes = append(s.Nodes, &regpb.Node{
 					Id:       strings.TrimSuffix(e.Name, "."+p.Service+"."+p.Domain+"."),
 					Address:  fmt.Sprintf("%s:%d", addr, e.Port),
 					Metadata: txt.Metadata,
@@ -399,7 +407,7 @@ func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*Service
 	<-done
 
 	// create list and return
-	services := make([]*Service, 0, len(serviceMap))
+	services := make([]*regpb.Service, 0, len(serviceMap))
 
 	for _, service := range serviceMap {
 		services = append(services, service)
@@ -408,7 +416,7 @@ func (m *mdnsRegistry) GetService(service string, opts ...GetOption) ([]*Service
 	return services, nil
 }
 
-func (m *mdnsRegistry) ListServices(opts ...ListOption) ([]*Service, error) {
+func (m *mdnsRegistry) ListServices(opts ...ListOption) ([]*regpb.Service, error) {
 	serviceMap := make(map[string]bool)
 	entries := make(chan *mdns.ServiceEntry, 10)
 	done := make(chan bool)
@@ -423,7 +431,7 @@ func (m *mdnsRegistry) ListServices(opts ...ListOption) ([]*Service, error) {
 	// set domain
 	p.Domain = m.domain
 
-	var services []*Service
+	var services []*regpb.Service
 
 	go func() {
 		for {
@@ -432,13 +440,26 @@ func (m *mdnsRegistry) ListServices(opts ...ListOption) ([]*Service, error) {
 				if e.TTL == 0 {
 					continue
 				}
+
 				if !strings.HasSuffix(e.Name, p.Domain+".") {
 					continue
 				}
+
+				txt, err := decode(e.InfoFields)
+				if err != nil {
+					continue
+				}
+
 				name := strings.TrimSuffix(e.Name, "."+p.Service+"."+p.Domain+".")
 				if !serviceMap[name] {
 					serviceMap[name] = true
-					services = append(services, &Service{Name: name})
+					services = append(services, &regpb.Service{
+						Name:      name,
+						Version:   txt.Version,
+						Metadata:  txt.Metadata,
+						Nodes:     txt.node,
+						Endpoints: txt.Endpoints,
+					})
 				}
 			case <-p.Context.Done():
 				close(done)
@@ -557,7 +578,7 @@ func (m *mdnsRegistry) String() string {
 	return "mdns"
 }
 
-func (m *mdnsWatcher) Next() (*Result, error) {
+func (m *mdnsWatcher) Next() (*regpb.Result, error) {
 	for {
 		select {
 		case e := <-m.ch:
@@ -582,7 +603,7 @@ func (m *mdnsWatcher) Next() (*Result, error) {
 				action = "create"
 			}
 
-			service := &Service{
+			service := &regpb.Service{
 				Name:      txt.Service,
 				Version:   txt.Version,
 				Endpoints: txt.Endpoints,
@@ -603,13 +624,13 @@ func (m *mdnsWatcher) Next() (*Result, error) {
 				addr = e.Addr.String()
 			}
 
-			service.Nodes = append(service.Nodes, &Node{
+			service.Nodes = append(service.Nodes, &regpb.Node{
 				Id:       strings.TrimSuffix(e.Name, suffix),
 				Address:  fmt.Sprintf("%s:%d", addr, e.Port),
 				Metadata: txt.Metadata,
 			})
 
-			return &Result{
+			return &regpb.Result{
 				Action:  action,
 				Service: service,
 			}, nil

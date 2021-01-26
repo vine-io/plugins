@@ -1,4 +1,4 @@
-// Copyright 2020 The vine Authors
+// Copyright 2020 lack
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,17 +17,18 @@ package memory
 import (
 	"errors"
 
+	regpb "github.com/lack-io/vine/proto/registry"
 	"github.com/lack-io/vine/service/registry"
 )
 
 type Watcher struct {
 	id   string
 	wo   registry.WatchOptions
-	res  chan *registry.Result
+	res  chan *regpb.Result
 	exit chan bool
 }
 
-func (m *Watcher) Next() (*registry.Result, error) {
+func (m *Watcher) Next() (*regpb.Result, error) {
 	for {
 		select {
 		case r := <-m.res:
