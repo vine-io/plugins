@@ -1,9 +1,11 @@
 package zap
 
 import (
+	"os"
 	"testing"
 
 	"github.com/lack-io/vine/service/logger"
+	"go.uber.org/zap/zapcore"
 )
 
 func TestName(t *testing.T) {
@@ -50,7 +52,7 @@ func TestWithFileWriter(t *testing.T) {
 		MaxBackups: 5,
 		MaxAge:     30,
 		Compress:   false,
-	}))
+	}), WithWriter(zapcore.AddSync(os.Stdout)))
 	if err != nil {
 		t.Fatal(err)
 	}
