@@ -151,7 +151,7 @@ github.com/juju/ratelimit
 github.com/kevinburke/ssh_config
 # github.com/lack-io/cli v1.0.2
 github.com/lack-io/cli
-# github.com/lack-io/vine v0.9.0
+# github.com/lack-io/vine v0.9.4
 ## explicit
 github.com/lack-io/vine/proto/auth
 github.com/lack-io/vine/proto/broker
