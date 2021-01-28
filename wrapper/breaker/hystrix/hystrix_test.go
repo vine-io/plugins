@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/micro/go-micro/v2/client"
-	"github.com/micro/go-micro/v2/client/selector"
-	"github.com/micro/go-micro/v2/registry/memory"
+	"github.com/lack-io/vine/service/client"
+	"github.com/lack-io/vine/service/client/selector"
+	"github.com/lack-io/vine/service/registry/memory"
 )
 
 func TestBreaker(t *testing.T) {
