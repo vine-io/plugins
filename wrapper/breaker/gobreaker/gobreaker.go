@@ -1,0 +1,106 @@
+// Copyright 2021 lack
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package gobreaker
+
+import (
+	"context"
+	"sync"
+
+	"github.com/lack-io/vine/proto/errors"
+	"github.com/lack-io/vine/service/client"
+	"github.com/sony/gobreaker"
+)
+
+type BreakerMethod int
+
+const (
+	BreakService BreakerMethod = iota
+	BreakServiceEndpoint
+)
+
+type clientWrapper struct {
+	bs  gobreaker.Settings
+	bm  BreakerMethod
+	cbs map[string]*gobreaker.TwoStepCircuitBreaker
+	mu  sync.Mutex
+	client.Client
+}
+
+func (c *clientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
+	var svc string
+
+	switch c.bm {
+	case BreakService:
+		svc = req.Service()
+	case BreakServiceEndpoint:
+		svc = req.Service() + "." + req.Endpoint()
+	}
+
+	c.mu.Lock()
+	cb, ok := c.cbs[svc]
+	if !ok {
+		cb = gobreaker.NewTwoStepCircuitBreaker(c.bs)
+		c.cbs[svc] = cb
+	}
+	c.mu.Unlock()
+
+	cbAllow, err := cb.Allow()
+	if err != nil {
+		return errors.New(req.Service(), err.Error(), 502)
+	}
+
+	if err = c.Client.Call(ctx, req, rsp, opts...); err == nil {
+		cbAllow(true)
+		return nil
+	}
+
+	merr := errors.Parse(err.Error())
+	switch {
+	case merr.Code == 0:
+		merr.Code = 503
+	case len(merr.Id) == 0:
+		merr.Id = req.Service()
+	}
+
+	if merr.Code >= 500 {
+		cbAllow(false)
+	} else {
+		cbAllow(true)
+	}
+
+	return merr
+}
+
+// NewClientWrapper returns a client Wrapper.
+func NewClientWrapper() client.Wrapper {
+	return func(c client.Client) client.Client {
+		w := &clientWrapper{}
+		w.bs = gobreaker.Settings{}
+		w.cbs = make(map[string]*gobreaker.TwoStepCircuitBreaker)
+		w.Client = c
+		return w
+	}
+}
+
+// NewCustomClientWrapper takes a gobreaker.Settings and BreakerMethod. Returns a client wrapper.
+func NewCustomClientWrapper(bs gobreaker.Settings, bm BreakerMethod) client.Wrapper {
+	return func(c client.Client) client.Client {
+		w := &clientWrapper{}
+		w.bm = bm
+		w.bs = bs
+		w.cbs = make(map[string]*gobreaker.TwoStepCircuitBreaker)
+		w.Client = c
+		return w
+	}
+}
