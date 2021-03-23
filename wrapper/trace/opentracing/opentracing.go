@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lack-io/vine/proto/registry"
+	rgpb "github.com/lack-io/vine/proto/apis/registry"
 	"github.com/lack-io/vine/service/client"
 	"github.com/lack-io/vine/service/server"
 	"github.com/lack-io/vine/util/context/metadata"
@@ -109,7 +109,7 @@ func NewClientWrapper(ot opentracing.Tracer) client.Wrapper {
 // NewCallWrapper accepts an opentracing Tracer and returns a Call Wrapper
 func NewCallWrapper(ot opentracing.Tracer) client.CallWrapper {
 	return func(cf client.CallFunc) client.CallFunc {
-		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
+		return func(ctx context.Context, node *rgpb.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			if ot == nil {
 				ot = opentracing.GlobalTracer()
 			}

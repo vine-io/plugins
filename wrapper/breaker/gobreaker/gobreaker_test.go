@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lack-io/vine/proto/errors"
+	"github.com/lack-io/vine/proto/apis/errors"
 	"github.com/lack-io/vine/service/client"
+	"github.com/lack-io/vine/service/client/grpc"
 	"github.com/lack-io/vine/service/client/selector"
 	"github.com/lack-io/vine/service/registry/memory"
 	"github.com/sony/gobreaker"
@@ -16,7 +17,7 @@ func TestBreaker(t *testing.T) {
 	r := memory.NewRegistry()
 	s := selector.NewSelector(selector.Registry(r))
 
-	c := client.NewClient(
+	c := grpc.NewClient(
 		// set the selector
 		client.Selector(s),
 		// add the breaker wrapper

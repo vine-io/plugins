@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/lack-io/vine/proto/errors"
+	"github.com/lack-io/vine/proto/apis/errors"
 	"github.com/lack-io/vine/service/client"
 	"github.com/sony/gobreaker"
 )

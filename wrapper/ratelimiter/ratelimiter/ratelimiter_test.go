@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/juju/ratelimit"
-	"github.com/lack-io/vine/proto/errors"
+	"github.com/lack-io/vine/proto/apis/errors"
 	bmemory "github.com/lack-io/vine/service/broker/memory"
 	"github.com/lack-io/vine/service/client"
 	gclient "github.com/lack-io/vine/service/client/mucp"

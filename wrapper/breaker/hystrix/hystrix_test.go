@@ -6,6 +6,7 @@ import (
 
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/lack-io/vine/service/client"
+	"github.com/lack-io/vine/service/client/grpc"
 	"github.com/lack-io/vine/service/client/selector"
 	"github.com/lack-io/vine/service/registry/memory"
 )
@@ -15,7 +16,7 @@ func TestBreaker(t *testing.T) {
 	r := memory.NewRegistry()
 	s := selector.NewSelector(selector.Registry(r))
 
-	c := client.NewClient(
+	c := grpc.NewClient(
 		// set the selector
 		client.Selector(s),
 		// add the breaker wrapper

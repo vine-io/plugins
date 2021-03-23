@@ -4,11 +4,13 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lack-io/vine/proto/errors"
+	"github.com/lack-io/vine/proto/apis/errors"
 	"github.com/lack-io/vine/service/client"
+	"github.com/lack-io/vine/service/client/grpc"
 	"github.com/lack-io/vine/service/client/selector"
 	"github.com/lack-io/vine/service/registry/memory"
 	"github.com/lack-io/vine/service/server"
+	grpcsvc "github.com/lack-io/vine/service/server/grpc"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/mocktracer"
 	"github.com/stretchr/testify/assert"
@@ -69,12 +71,12 @@ func TestClient(t *testing.T) {
 			serverID := "id-1234567890"
 			serverVersion := "1.0.0"
 
-			c := client.NewClient(
+			c := grpc.NewClient(
 				client.Selector(sel),
 				client.WrapCall(NewCallWrapper(tracer)),
 			)
 
-			s := server.NewServer(
+			s := grpcsvc.NewServer(
 				server.Name(serverName),
 				server.Version(serverVersion),
 				server.Id(serverID),
