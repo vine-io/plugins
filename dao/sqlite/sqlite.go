@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package sqlite3
+package sqlite
 
 import (
 	"github.com/lack-io/vine/service/dao"
