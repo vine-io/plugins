@@ -51,7 +51,7 @@ func TestCustomBreaker(t *testing.T) {
 	r := memory.NewRegistry()
 	s := selector.NewSelector(selector.Registry(r))
 
-	c := client.NewClient(
+	c := grpc.NewClient(
 		// set the selector
 		client.Selector(s),
 		// add the breaker wrapper
