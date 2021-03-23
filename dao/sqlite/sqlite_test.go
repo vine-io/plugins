@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lack-io/vine/service/dao"
-	"github.com/lack-io/vine/service/dao/sqlite"
 	"github.com/mattn/go-sqlite3"
+
+	"github.com/lack-io/vine/service/dao"
 )
 
 func TestDialector(t *testing.T) {
@@ -57,19 +57,19 @@ func TestDialector(t *testing.T) {
 		},
 		{
 			description: "Bad driver",
-			dialect:     NewDialect(dao.DSN(InMemoryDSN), sqlite.DriverName("not-a-real-driver")),
+			dialect:     NewDialect(dao.DSN(InMemoryDSN), DriverName("not-a-real-driver")),
 			openSuccess: false,
 		},
 		{
 			description:  "Custom driver",
-			dialect:      NewDialect(dao.DSN(InMemoryDSN), sqlite.DriverName(CustomDriverName)),
+			dialect:      NewDialect(dao.DSN(InMemoryDSN), DriverName(CustomDriverName)),
 			openSuccess:  true,
 			query:        "SELECT 1",
 			querySuccess: true,
 		},
 		{
 			description:  "Custom driver, custom function",
-			dialect:      NewDialect(dao.DSN(InMemoryDSN), sqlite.DriverName(CustomDriverName)),
+			dialect:      NewDialect(dao.DSN(InMemoryDSN), DriverName(CustomDriverName)),
 			openSuccess:  true,
 			query:        "SELECT my_custom_function()",
 			querySuccess: true,
