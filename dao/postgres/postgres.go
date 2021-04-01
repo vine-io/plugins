@@ -13,7 +13,6 @@
 package postgres
 
 import (
-	"database/sql"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -41,10 +40,9 @@ type Dialect struct {
 	Conn                 dao.ConnPool
 	PreferSimpleProtocol bool
 	WithOutReturning     bool
-	//Conn                 *sql.DB
 }
 
-func newMysqlDialect(opts ...dao.Option) dao.Dialect {
+func newPGDialect(opts ...dao.Option) dao.Dialect {
 	options := dao.NewOptions(opts...)
 
 	for _, opt := range opts {
@@ -58,8 +56,6 @@ func newMysqlDialect(opts ...dao.Option) dao.Dialect {
 
 	if name, ok := options.Context.Value(driverNameKey{}).(string); ok {
 		dialect.DriverName = name
-	} else {
-		dialect.DriverName = DefaultDriverName
 	}
 
 	if b, ok := options.Context.Value(preferSimpleProtocolKey{}).(bool); ok {
@@ -97,11 +93,6 @@ func (d *Dialect) Init(opts ...dao.Option) (err error) {
 
 	if d.Conn != nil {
 		d.DB.ConnPool = d.Conn
-	} else if d.DriverName != "" {
-		d.DB.ConnPool, err = sql.Open(d.DriverName, d.Opts.DSN)
-		if err != nil {
-			return err
-		}
 	} else {
 		var config *pgx.ConnConfig
 
@@ -116,7 +107,7 @@ func (d *Dialect) Init(opts ...dao.Option) (err error) {
 		if len(result) > 2 {
 			config.RuntimeParams["timezone"] = result[2]
 		}
-		d.Opts.ConnPool = stdlib.OpenDB(*config)
+		d.DB.ConnPool = stdlib.OpenDB(*config)
 	}
 
 	d.DB.Statement.ConnPool = d.DB.ConnPool
@@ -209,18 +200,18 @@ func (d *Dialect) BindVarTo(writer clause.Writer, stmt *dao.Statement, v interfa
 }
 
 func (d *Dialect) QuoteTo(writer clause.Writer, str string) {
-	writer.WriteByte('`')
+	writer.WriteByte('"')
 	if strings.Contains(str, ".") {
 		for idx, str := range strings.Split(str, ".") {
 			if idx > 0 {
-				writer.WriteString(".`")
+				writer.WriteString(`."`)
 			}
 			writer.WriteString(str)
-			writer.WriteByte('`')
+			writer.WriteByte('"')
 		}
 	} else {
 		writer.WriteString(str)
-		writer.WriteByte('`')
+		writer.WriteByte('"')
 	}
 }
 
@@ -252,8 +243,6 @@ func (d *Dialect) String() string {
 	return "postgres"
 }
 
-// Example:
-//	mysql.NewDialect(dao.DSN("dao:dao@tcp(localhost:9910)/dao?charset=utf8&parseTime=True&loc=Local"))
 func NewDialect(opts ...dao.Option) dao.Dialect {
-	return newMysqlDialect(opts...)
+	return newPGDialect(opts...)
 }

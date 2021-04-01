@@ -24,6 +24,7 @@ type jsonQueryExpression struct {
 	tx          *dao.DB
 	op          dao.JSONOp
 	column      string
+	contains    bool
 	keys        []string
 	equalsValue interface{}
 }
@@ -37,6 +38,14 @@ func (j *jsonQueryExpression) Tx(tx *dao.DB) dao.JSONQuery {
 	return j
 }
 
+func (j *jsonQueryExpression) Contains(op dao.JSONOp, value interface{}, keys ...string) dao.JSONQuery {
+	j.contains = true
+	j.op = op
+	j.keys = keys
+	j.equalsValue = value
+	return j
+}
+
 func (j *jsonQueryExpression) Op(op dao.JSONOp, value interface{}, keys ...string) dao.JSONQuery {
 	j.op = op
 	j.keys = keys
@@ -46,52 +55,23 @@ func (j *jsonQueryExpression) Op(op dao.JSONOp, value interface{}, keys ...strin
 
 func (j *jsonQueryExpression) Build(builder clause.Builder) {
 	if stmt, ok := builder.(*dao.Statement); ok {
-		switch j.op {
-		case dao.JSONContains:
+		if j.contains {
 			if len(j.keys) == 0 {
 				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '?', '$')", stmt.Quote(j.column)))
 			} else {
 				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '?', '$.%s')", stmt.Quote(j.column), strings.Join(j.keys, ".")))
 			}
 			stmt.AddVar(builder, j.equalsValue)
-		case dao.JSONHasKey:
+		} else {
 			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') IS NOT NULL", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-			}
-		case dao.JSONEq:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') = ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONNeq:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') <> ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONGte:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') >= ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONGt:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') > ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONLte:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') <= ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONLt:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') < ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
-			}
-		case dao.JSONLike:
-			if len(j.keys) > 0 {
-				builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') LIKE ", stmt.Quote(j.column), strings.Join(j.keys, ".")))
-				stmt.AddVar(builder, j.equalsValue)
+				if j.op == dao.JSONHasKey {
+					builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') IS NOT NULL", stmt.Quote(j.column), strings.Join(j.keys, ".")))
+				} else {
+					if len(j.keys) > 0 {
+						builder.WriteString(fmt.Sprintf("JSON_EXTRACT(%s, '$.%s') %s ", stmt.Quote(j.column), strings.Join(j.keys, "."), j.op.String()))
+						stmt.AddVar(builder, j.equalsValue)
+					}
+				}
 			}
 		}
 	}
