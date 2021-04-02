@@ -67,7 +67,7 @@ func (j *jsonQueryExpression) Build(builder clause.Builder) {
 						sm = fmt.Sprintf("JSON_OBJECT('%s', %s)", j.keys[i], sm)
 					}
 				}
-				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '%s')", stmt.Quote(j.column), sm))
+				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, %s)", stmt.Quote(j.column), sm))
 			}
 		} else {
 			if len(j.keys) > 0 {

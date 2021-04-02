@@ -82,7 +82,7 @@ func TestQuery(t *testing.T) {
 
 	clauses := []clause.Expression{
 		dao.DefaultDialect.JSONBuild("others").Tx(tx).Contains(dao.JSONLike, "u1", "name"),
-		//dao.DefaultDialect.JSONBuild("d1").Tx(tx).Op(dao.JSONHasKey, nil, "d2"),
+		dao.DefaultDialect.JSONBuild("d1").Tx(tx).Op(dao.JSONHasKey, nil, "d2"),
 	}
 	tx.Model(&UserS{}).Clauses(clauses...).First(&u1)
 
