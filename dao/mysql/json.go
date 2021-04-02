@@ -57,11 +57,18 @@ func (j *jsonQueryExpression) Build(builder clause.Builder) {
 	if stmt, ok := builder.(*dao.Statement); ok {
 		if j.contains {
 			if len(j.keys) == 0 {
-				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '?', '$')", stmt.Quote(j.column)))
+				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '%s')", stmt.Quote(j.column), j.equalsValue))
 			} else {
-				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '?', '$.%s')", stmt.Quote(j.column), strings.Join(j.keys, ".")))
+				var sm string
+				for i := len(j.keys) - 1; i >= 0; i-- {
+					if i == len(j.keys)-1 {
+						sm = fmt.Sprintf("JSON_OBJECT('%s', '%s')", j.keys[i], j.equalsValue)
+					} else {
+						sm = fmt.Sprintf("JSON_OBJECT('%s', %s)", j.keys[i], sm)
+					}
+				}
+				builder.WriteString(fmt.Sprintf("JSON_CONTAINS(%s, '%s')", stmt.Quote(j.column), sm))
 			}
-			stmt.AddVar(builder, j.equalsValue)
 		} else {
 			if len(j.keys) > 0 {
 				if j.op == dao.JSONHasKey {

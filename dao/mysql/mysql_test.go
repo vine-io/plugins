@@ -1,4 +1,4 @@
-package postgres_test
+package mysql_test
 
 import (
 	"database/sql/driver"
@@ -10,42 +10,78 @@ import (
 	"github.com/lack-io/vine/service/dao"
 	"github.com/lack-io/vine/service/dao/clause"
 
-	"github.com/lack-io/plugins/dao/postgres"
+	"github.com/lack-io/plugins/dao/mysql"
 )
 
-const dsn = "host=192.168.2.130 user=postgres password=123 dbname=mysite port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+const dns = "test:test@tcp(192.168.2.178:3306)/mysite?charset=utf8&parseTime=True&loc=Local"
 
 func TestNewDialect(t *testing.T) {
-	dao.DefaultDialect = postgres.NewDialect(dao.DSN(dsn))
+
+	dao.DefaultDialect = mysql.NewDialect(dao.DSN(dns))
 	err := dao.DefaultDialect.Init()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	//if err := d.Migrator().AutoMigrate(&UserS{}); err != nil {
-	//	t.Fatal(err)
-	//}
+	if err := dao.DefaultDialect.Migrator().AutoMigrate(&UserS{}); err != nil {
+		t.Fatal(err)
+	}
 
-	//u1 := &UserS{
-	//	Others: []*Other{{Name: "u2", Age: 23}},
-	//	Sli:    []string{"cc", "bb"},
-	//	D1: (*UserD1)(&D1{
-	//		Name: "aa",
-	//		D2: struct {
-	//			BB string `json:"bb"`
-	//		}{BB: "bbc"},
-	//	}),
-	//}
+	u1 := &UserS{
+		Others: []*Other{{Name: "u1", Age: 23}},
+		Sli:    []string{"aa", "bb"},
+		D1: (*UserD1)(&D1{
+			Name: "aa",
+			D2: struct {
+				BB string `json:"bb"`
+			}{BB: "bb"},
+		}),
+	}
 
-	//if err := d.NewTx().Create(u1).Error; err != nil {
-	//	t.Log(err)
+	u2 := &UserS{
+		Others: []*Other{{Name: "u2", Age: 24}},
+		Sli:    []string{"cc", "bb"},
+		D1: (*UserD1)(&D1{
+			Name: "bb",
+			D2: struct {
+				BB string `json:"bb"`
+			}{BB: "bbc"},
+		}),
+	}
+
+	if err := dao.DefaultDialect.NewTx().Create(u1).Error; err != nil {
+		t.Log(err)
+	}
+
+	if err := dao.DefaultDialect.NewTx().Create(u2).Error; err != nil {
+		t.Log(err)
+	}
+
+	//tx := dao.DefaultDialect.NewTx()
+	//u1 := &UserS{}
+	//
+	//clauses := []clause.Expression{
+	//	dao.DefaultDialect.JSONBuild("others").Tx(tx).Contains(dao.JSONLike, "u%", "name"),
+	//	//dao.DefaultDialect.JSONBuild("d1").Tx(tx).Op(dao.JSONHasKey, nil, "d2"),
 	//}
+	//tx.Model(&UserS{}).Clauses(clauses...).First(&u1)
+	//
+	//t.Log(u1)
+}
+
+func TestQuery(t *testing.T) {
+
+	dao.DefaultDialect = mysql.NewDialect(dao.DSN(dns))
+	err := dao.DefaultDialect.Init()
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	tx := dao.DefaultDialect.NewTx()
 	u1 := &UserS{}
 
 	clauses := []clause.Expression{
-		dao.DefaultDialect.JSONBuild("others").Tx(tx).Contains(dao.JSONLike, "u%", "name"),
+		dao.DefaultDialect.JSONBuild("others").Tx(tx).Contains(dao.JSONLike, "u1", "name"),
 		//dao.DefaultDialect.JSONBuild("d1").Tx(tx).Op(dao.JSONHasKey, nil, "d2"),
 	}
 	tx.Model(&UserS{}).Clauses(clauses...).First(&u1)
@@ -86,7 +122,7 @@ func (m *UserOthers) Scan(value interface{}) error {
 }
 
 func (m *UserOthers) DaoDataType() string {
-	return "json"
+	return dao.DefaultDialect.JSONDataType()
 }
 
 // UserSli the alias of []string
@@ -117,7 +153,7 @@ func (m *UserSli) Scan(value interface{}) error {
 }
 
 func (m *UserSli) DaoDataType() string {
-	return "json"
+	return dao.DefaultDialect.JSONDataType()
 }
 
 type D1 struct {
@@ -166,4 +202,8 @@ type UserS struct {
 	Sli               UserSli    `json:"sli,omitempty" dao:"column:sli"`
 	D1                *UserD1    `json:"d1,omitempty" dao:"column:d1"`
 	DeletionTimestamp int64      `json:"deletionTimestamp,omitempty" dao:"column:deletion_timestamp"`
+}
+
+func (u *UserS) TableName() string {
+	return "users"
 }
