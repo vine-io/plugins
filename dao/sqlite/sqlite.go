@@ -26,21 +26,23 @@ import (
 	"database/sql"
 	"strconv"
 	"strings"
+	"sync"
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/lack-io/vine/service/dao"
-	"github.com/lack-io/vine/service/dao/callbacks"
-	"github.com/lack-io/vine/service/dao/clause"
-	"github.com/lack-io/vine/service/dao/logger"
-	"github.com/lack-io/vine/service/dao/migrator"
-	"github.com/lack-io/vine/service/dao/schema"
+	"github.com/lack-io/vine/lib/dao"
+	"github.com/lack-io/vine/lib/dao/callbacks"
+	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/lack-io/vine/lib/dao/logger"
+	"github.com/lack-io/vine/lib/dao/migrator"
+	"github.com/lack-io/vine/lib/dao/schema"
 )
 
 // DefaultDriverName is the default driver name for SQLite.
 const DefaultDriverName = "sqlite3"
 
 type Dialect struct {
+	once       sync.Once
 	DB         *dao.DB
 	Opts       dao.Options
 	DriverName string
@@ -86,8 +88,10 @@ func (d *Dialect) Init(opts ...dao.Option) (err error) {
 		}
 	}
 
-	callbacks.RegisterDefaultCallbacks(d.DB, &callbacks.Options{
-		LastInsertIDReversed: true,
+	d.once.Do(func() {
+		callbacks.RegisterDefaultCallbacks(d.DB, &callbacks.Options{
+			LastInsertIDReversed: true,
+		})
 	})
 
 	if d.Conn != nil {

@@ -25,7 +25,7 @@ package postgres
 import (
 	"context"
 
-	"github.com/lack-io/vine/service/dao"
+	"github.com/lack-io/vine/lib/dao"
 )
 
 type driverNameKey struct{}

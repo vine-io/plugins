@@ -19,8 +19,8 @@ import (
 	"strings"
 
 	rgpb "github.com/lack-io/vine/proto/apis/registry"
-	"github.com/lack-io/vine/service/client"
-	"github.com/lack-io/vine/service/server"
+	"github.com/lack-io/vine/core/client"
+	"github.com/lack-io/vine/core/server"
 	"github.com/lack-io/vine/util/context/metadata"
 	opentracing "github.com/opentracing/opentracing-go"
 	opentracinglog "github.com/opentracing/opentracing-go/log"

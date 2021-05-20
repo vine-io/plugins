@@ -27,16 +27,17 @@ import (
 	"fmt"
 	"math"
 	"strings"
+	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/lack-io/vine/service/dao"
-	"github.com/lack-io/vine/service/dao/callbacks"
-	"github.com/lack-io/vine/service/dao/clause"
-	"github.com/lack-io/vine/service/dao/logger"
-	"github.com/lack-io/vine/service/dao/migrator"
-	"github.com/lack-io/vine/service/dao/schema"
+	"github.com/lack-io/vine/lib/dao/callbacks"
+	"github.com/lack-io/vine/lib/dao"
+	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/lack-io/vine/lib/dao/logger"
+	"github.com/lack-io/vine/lib/dao/migrator"
+	"github.com/lack-io/vine/lib/dao/schema"
 )
 
 const (
@@ -47,6 +48,7 @@ const (
 )
 
 type Dialect struct {
+	once                      sync.Once
 	DB                        *dao.DB
 	Opts                      dao.Options
 	DriverName                string
@@ -129,9 +131,10 @@ func (d *Dialect) Init(opts ...dao.Option) (err error) {
 		}
 	}
 
-	callbacks.RegisterDefaultCallbacks(d.DB, &callbacks.Options{})
-
-	_ = d.DB.Callback().Update().Replace("dao:update", Update)
+	d.once.Do(func() {
+		callbacks.RegisterDefaultCallbacks(d.DB, &callbacks.Options{})
+		_ = d.DB.Callback().Update().Replace("dao:update", Update)
+	})
 
 	if d.Conn != nil {
 		d.DB.ConnPool = d.Conn

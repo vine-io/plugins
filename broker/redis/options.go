@@ -15,7 +15,7 @@ package redis
 import (
 	"time"
 
-	"github.com/lack-io/vine/service/broker"
+	"github.com/lack-io/vine/core/broker"
 )
 
 var (

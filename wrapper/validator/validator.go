@@ -15,9 +15,9 @@ package validator
 import (
 	"context"
 
+	"github.com/lack-io/vine/core/client"
+	"github.com/lack-io/vine/core/server"
 	"github.com/lack-io/vine/proto/apis/errors"
-	"github.com/lack-io/vine/service/client"
-	"github.com/lack-io/vine/service/server"
 )
 
 type Validator interface {

@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/juju/ratelimit"
+	bmemory "github.com/lack-io/vine/core/broker/memory"
+	"github.com/lack-io/vine/core/client"
+	gclient "github.com/lack-io/vine/core/client/mucp"
+	"github.com/lack-io/vine/core/client/selector"
+	rmemory "github.com/lack-io/vine/core/registry/memory"
+	"github.com/lack-io/vine/core/server"
+	gserver "github.com/lack-io/vine/core/server/mucp"
+	tmemory "github.com/lack-io/vine/core/transport/memory"
 	"github.com/lack-io/vine/proto/apis/errors"
-	bmemory "github.com/lack-io/vine/service/broker/memory"
-	"github.com/lack-io/vine/service/client"
-	gclient "github.com/lack-io/vine/service/client/mucp"
-	"github.com/lack-io/vine/service/client/selector"
-	tmemory "github.com/lack-io/vine/service/network/transport/memory"
-	rmemory "github.com/lack-io/vine/service/registry/memory"
-	"github.com/lack-io/vine/service/server"
-	gserver "github.com/lack-io/vine/service/server/mucp"
 )
 
 type testHandler struct{}

@@ -2,8 +2,9 @@
 package http
 
 import (
-	"github.com/lack-io/vine/service/config/cmd"
-	"github.com/lack-io/vine/service/network/transport"
+	"github.com/lack-io/vine/core/transport"
+	"github.com/lack-io/vine/core/transport/http"
+	"github.com/lack-io/vine/lib/cmd"
 )
 
 func init() {
@@ -12,5 +13,5 @@ func init() {
 
 // NewTransport returns a new http transport using net/http and supporting http2
 func NewTransport(opts ...transport.Option) transport.Transport {
-	return transport.NewTransport(opts...)
+	return http.NewTransport(opts...)
 }

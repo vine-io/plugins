@@ -2,9 +2,9 @@
 package grpc
 
 import (
-	"github.com/lack-io/vine/service/config/cmd"
-	"github.com/lack-io/vine/service/network/transport"
-	"github.com/lack-io/vine/service/network/transport/grpc"
+	"github.com/lack-io/vine/core/transport"
+	"github.com/lack-io/vine/core/transport/grpc"
+	"github.com/lack-io/vine/lib/cmd"
 )
 
 func init() {

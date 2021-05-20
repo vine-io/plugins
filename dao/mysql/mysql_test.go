@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lack-io/vine/service/dao"
-	"github.com/lack-io/vine/service/dao/clause"
+	"github.com/lack-io/vine/lib/dao"
+	"github.com/lack-io/vine/lib/dao/clause"
 
 	"github.com/lack-io/plugins/dao/mysql"
 )

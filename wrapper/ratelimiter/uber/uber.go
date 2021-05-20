@@ -15,8 +15,8 @@ package uber
 import (
 	"context"
 
-	"github.com/lack-io/vine/service/client"
-	"github.com/lack-io/vine/service/server"
+	"github.com/lack-io/vine/core/client"
+	"github.com/lack-io/vine/core/server"
 	"go.uber.org/ratelimit"
 )
 

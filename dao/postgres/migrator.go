@@ -27,10 +27,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lack-io/vine/service/dao"
-	"github.com/lack-io/vine/service/dao/clause"
-	"github.com/lack-io/vine/service/dao/migrator"
-	"github.com/lack-io/vine/service/dao/schema"
+	"github.com/lack-io/vine/lib/dao"
+	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/lack-io/vine/lib/dao/migrator"
+	"github.com/lack-io/vine/lib/dao/schema"
 )
 
 type Migrator struct {

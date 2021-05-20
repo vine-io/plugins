@@ -1,9 +1,9 @@
 package etcd
 
 import (
-	"github.com/lack-io/vine/service/config/cmd"
-	"github.com/lack-io/vine/service/registry"
-	"github.com/lack-io/vine/service/registry/etcd"
+	"github.com/lack-io/vine/core/registry"
+	"github.com/lack-io/vine/core/registry/etcd"
+	"github.com/lack-io/vine/lib/cmd"
 )
 
 func init() {

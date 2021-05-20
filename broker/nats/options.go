@@ -15,7 +15,7 @@ package nats
 import (
 	"context"
 
-	"github.com/lack-io/vine/service/broker"
+	"github.com/lack-io/vine/core/broker"
 	nats "github.com/nats-io/nats.go"
 )
 

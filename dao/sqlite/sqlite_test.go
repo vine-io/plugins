@@ -7,7 +7,7 @@ import (
 
 	"github.com/mattn/go-sqlite3"
 
-	"github.com/lack-io/vine/service/dao"
+	"github.com/lack-io/vine/lib/dao"
 )
 
 func TestDialector(t *testing.T) {
