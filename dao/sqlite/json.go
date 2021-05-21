@@ -55,6 +55,7 @@ func (j *jsonQueryExpression) Op(op dao.JSONOp, value interface{}, keys ...strin
 	return j
 }
 
+// Contains
 // SELECT * FROM users INNER JOIN JSON_EACH(`comments`) ON JSON_EXTRACT(JSON_EACH.value, '$.content') = 'aaa';
 //
 // SELECT * FROM users INNER JOIN JSON_EACH(`following`) ON JSON_EACH.value = 'OY';

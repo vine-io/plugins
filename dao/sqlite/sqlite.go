@@ -39,7 +39,7 @@ import (
 )
 
 // DefaultDriverName is the default driver name for SQLite.
-const DefaultDriverName = "sqlite3"
+const DefaultDriverName = "sqlite"
 
 type Dialect struct {
 	once       sync.Once
@@ -251,7 +251,7 @@ func (d *Dialect) JSONBuild(column string) dao.JSONQuery {
 }
 
 func (d *Dialect) String() string {
-	return "sqlite3"
+	return "sqlite"
 }
 
 func NewDialect(opts ...dao.Option) dao.Dialect {
