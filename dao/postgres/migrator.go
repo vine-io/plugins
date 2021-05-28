@@ -87,7 +87,7 @@ func (c Column) DecimalSize() (precision int64, scale int64, ok bool) {
 	return
 }
 
-func (m Migrator) CurrentDataBase() (name string) {
+func (m Migrator) CurrentDatabase() (name string) {
 	m.DB.Raw("SELECT CURRENT_DATABASE()").Row().Scan(&name)
 	return
 }

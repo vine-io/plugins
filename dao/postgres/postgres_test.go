@@ -22,9 +22,9 @@ func TestNewDialect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	//if err := d.Migrator().AutoMigrate(&UserS{}); err != nil {
-	//	t.Fatal(err)
-	//}
+	if err := dao.DefaultDialect.Migrator().AutoMigrate(&UserS{}); err != nil {
+		t.Fatal(err)
+	}
 
 	//u1 := &UserS{
 	//	Others: []*Other{{Name: "u2", Age: 23}},
