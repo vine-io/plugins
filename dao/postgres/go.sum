@@ -418,11 +418,14 @@ github.com/labbsr0x/bindman-dns-webhook v1.0.2/go.mod h1:p6b+VCXIR8NYKpDr8/dg1HK
 github.com/labbsr0x/goh v1.0.1/go.mod h1:8K2UhVoaWXcCU7Lxoa2omWnC8gyW8px7/lmO61c027w=
 github.com/lack-io/cli v1.1.0/go.mod h1:RO7Udy97CJapM06eWztYk2CLVSXwxdmur7y60vpSC0M=
 github.com/lack-io/cli v1.2.2/go.mod h1:RO7Udy97CJapM06eWztYk2CLVSXwxdmur7y60vpSC0M=
+github.com/lack-io/cli v1.2.3/go.mod h1:RO7Udy97CJapM06eWztYk2CLVSXwxdmur7y60vpSC0M=
 github.com/lack-io/gscheduler v0.1.0/go.mod h1:Q52YN4D8eGbSPbSnRBblJTZTn1niT6wb8gmQi2/SKXI=
 github.com/lack-io/vine v0.10.21 h1:lBlni4yDlNAHz42RCNIg8mDniyK/pF8WKQRbq3L9Oiw=
 github.com/lack-io/vine v0.10.21/go.mod h1:6aceONVS8moD4b7/v2cS+ghrxJH6X6T2XLHw8uJzs24=
 github.com/lack-io/vine v0.16.0 h1:bB5hq6/AHULAqNM8AsVVI1/KnBoHBT6ypNapqR2sAvo=
 github.com/lack-io/vine v0.16.0/go.mod h1:ahAypu8x31q5pI6tz5WBjrPejlZ54H7OhOTQSlhwdS8=
+github.com/lack-io/vine v0.17.0 h1:wZ5w800KkQZQfAqvKpb4csYDSO1nKBFJzlEOBy8oCgw=
+github.com/lack-io/vine v0.17.0/go.mod h1:+ZtjrWC8ukzJ6w2/awGb8BI0EfF7UFomFHMsEYLjL/0=
 github.com/lib/pq v1.0.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.1.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
