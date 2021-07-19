@@ -29,7 +29,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/lack-io/vine/service/logger"
+	"github.com/lack-io/vine/lib/logger"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
