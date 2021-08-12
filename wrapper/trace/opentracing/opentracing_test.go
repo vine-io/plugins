@@ -4,16 +4,16 @@ import (
 	"context"
 	"testing"
 
-	"github.com/vine-io/vine/proto/apis/errors"
+	"github.com/opentracing/opentracing-go"
+	"github.com/opentracing/opentracing-go/mocktracer"
+	"github.com/stretchr/testify/assert"
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/core/client/grpc"
 	"github.com/vine-io/vine/core/client/selector"
 	"github.com/vine-io/vine/core/registry/memory"
 	"github.com/vine-io/vine/core/server"
 	grpcsvc "github.com/vine-io/vine/core/server/grpc"
-	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/opentracing-go/mocktracer"
-	"github.com/stretchr/testify/assert"
+	"github.com/vine-io/vine/proto/apis/errors"
 )
 
 type Test interface {

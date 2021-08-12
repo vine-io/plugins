@@ -18,12 +18,12 @@ import (
 	"fmt"
 	"strings"
 
-	rgpb "github.com/vine-io/vine/proto/apis/registry"
+	"github.com/opentracing/opentracing-go"
+	opentracinglog "github.com/opentracing/opentracing-go/log"
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/core/server"
+	rgpb "github.com/vine-io/vine/proto/apis/registry"
 	"github.com/vine-io/vine/util/context/metadata"
-	opentracing "github.com/opentracing/opentracing-go"
-	opentracinglog "github.com/opentracing/opentracing-go/log"
 )
 
 type otWrapper struct {

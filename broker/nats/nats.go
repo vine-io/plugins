@@ -18,12 +18,12 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/nats-io/nats.go"
 	"github.com/vine-io/vine/core/broker"
 	"github.com/vine-io/vine/core/codec/json"
 	"github.com/vine-io/vine/core/registry"
 	"github.com/vine-io/vine/lib/cmd"
 	log "github.com/vine-io/vine/lib/logger"
-	"github.com/nats-io/nats.go"
 )
 
 type natsBroker struct {

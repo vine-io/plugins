@@ -29,8 +29,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/vine-io/vine/lib/logger"
 	"github.com/natefinch/lumberjack"
+	"github.com/vine-io/vine/lib/logger"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -32,8 +32,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/vine-io/vine/lib/dao/callbacks"
 	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/callbacks"
 	"github.com/vine-io/vine/lib/dao/clause"
 	"github.com/vine-io/vine/lib/dao/logger"
 	"github.com/vine-io/vine/lib/dao/migrator"

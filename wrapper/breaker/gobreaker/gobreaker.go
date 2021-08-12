@@ -16,9 +16,9 @@ import (
 	"context"
 	"sync"
 
+	"github.com/sony/gobreaker"
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/proto/apis/errors"
-	"github.com/sony/gobreaker"
 )
 
 type BreakerMethod int
