@@ -17,9 +17,9 @@ import (
 	"time"
 
 	"github.com/juju/ratelimit"
-	"github.com/lack-io/vine/core/client"
-	"github.com/lack-io/vine/core/server"
-	"github.com/lack-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/core/server"
+	"github.com/vine-io/vine/proto/apis/errors"
 )
 
 type clientWrapper struct {

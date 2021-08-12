@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lack-io/vine/lib/dao"
-	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/clause"
 
-	"github.com/lack-io/plugins/dao/mysql"
+	"github.com/vine-io/plugins/dao/mysql"
 )
 
 const dns = "test:test@tcp(192.168.2.178:3306)/mysite?charset=utf8&parseTime=True&loc=Local"

@@ -18,11 +18,11 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/lack-io/vine/core/broker"
-	"github.com/lack-io/vine/core/codec/json"
-	"github.com/lack-io/vine/core/registry"
-	"github.com/lack-io/vine/lib/cmd"
-	log "github.com/lack-io/vine/lib/logger"
+	"github.com/vine-io/vine/core/broker"
+	"github.com/vine-io/vine/core/codec/json"
+	"github.com/vine-io/vine/core/registry"
+	"github.com/vine-io/vine/lib/cmd"
+	log "github.com/vine-io/vine/lib/logger"
 	"github.com/nats-io/nats.go"
 )
 

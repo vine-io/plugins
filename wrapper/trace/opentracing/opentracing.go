@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"strings"
 
-	rgpb "github.com/lack-io/vine/proto/apis/registry"
-	"github.com/lack-io/vine/core/client"
-	"github.com/lack-io/vine/core/server"
-	"github.com/lack-io/vine/util/context/metadata"
+	rgpb "github.com/vine-io/vine/proto/apis/registry"
+	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/core/server"
+	"github.com/vine-io/vine/util/context/metadata"
 	opentracing "github.com/opentracing/opentracing-go"
 	opentracinglog "github.com/opentracing/opentracing-go/log"
 )

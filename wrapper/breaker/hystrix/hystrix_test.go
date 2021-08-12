@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/afex/hystrix-go/hystrix"
-	"github.com/lack-io/vine/core/client"
-	"github.com/lack-io/vine/core/client/grpc"
-	"github.com/lack-io/vine/core/client/selector"
-	"github.com/lack-io/vine/core/registry/memory"
+	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/core/client/grpc"
+	"github.com/vine-io/vine/core/client/selector"
+	"github.com/vine-io/vine/core/registry/memory"
 )
 
 func TestBreaker(t *testing.T) {

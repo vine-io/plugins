@@ -26,8 +26,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lack-io/vine/lib/dao"
-	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/clause"
 )
 
 type jsonQueryExpression struct {

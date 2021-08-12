@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/lack-io/vine/lib/dao"
-	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/clause"
 
-	"github.com/lack-io/plugins/dao/postgres"
+	"github.com/vine-io/plugins/dao/postgres"
 )
 
 const dsn = "host=192.168.2.130 user=postgres password=123 dbname=mysite port=5432 sslmode=disable TimeZone=Asia/Shanghai"

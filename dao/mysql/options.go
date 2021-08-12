@@ -25,7 +25,7 @@ package mysql
 import (
 	"context"
 
-	"github.com/lack-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao"
 )
 
 type driverNameKey struct{}

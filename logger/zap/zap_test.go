@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/lack-io/vine/lib/logger"
+	"github.com/vine-io/vine/lib/logger"
 	"go.uber.org/zap/zapcore"
 )
 

@@ -1,5 +1,5 @@
-module github.com/lack-io/plugins/registry/etcd
+module github.com/vine-io/plugins/registry/etcd
 
 go 1.15
 
-require github.com/lack-io/vine v0.20.8
+require github.com/vine-io/vine v0.20.15

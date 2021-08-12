@@ -16,8 +16,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/lack-io/vine/core/client"
-	"github.com/lack-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/proto/apis/errors"
 	"github.com/sony/gobreaker"
 )
 

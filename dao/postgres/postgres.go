@@ -31,12 +31,12 @@ import (
 
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
-	"github.com/lack-io/vine/lib/dao"
-	"github.com/lack-io/vine/lib/dao/callbacks"
-	"github.com/lack-io/vine/lib/dao/clause"
-	"github.com/lack-io/vine/lib/dao/logger"
-	"github.com/lack-io/vine/lib/dao/migrator"
-	"github.com/lack-io/vine/lib/dao/schema"
+	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/callbacks"
+	"github.com/vine-io/vine/lib/dao/clause"
+	"github.com/vine-io/vine/lib/dao/logger"
+	"github.com/vine-io/vine/lib/dao/migrator"
+	"github.com/vine-io/vine/lib/dao/schema"
 )
 
 const (

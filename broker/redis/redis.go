@@ -17,10 +17,10 @@ import (
 	"errors"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/lack-io/vine/core/broker"
-	"github.com/lack-io/vine/core/codec"
-	"github.com/lack-io/vine/core/codec/json"
-	"github.com/lack-io/vine/lib/cmd"
+	"github.com/vine-io/vine/core/broker"
+	"github.com/vine-io/vine/core/codec"
+	"github.com/vine-io/vine/core/codec/json"
+	"github.com/vine-io/vine/lib/cmd"
 )
 
 func init() {

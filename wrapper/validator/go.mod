@@ -1,5 +1,5 @@
-module github.com/lack-io/plugins/wrapper/validator
+module github.com/vine-io/plugins/wrapper/validator
 
 go 1.15
 
-require github.com/lack-io/vine v0.20.12
+require github.com/vine-io/vine v0.20.15

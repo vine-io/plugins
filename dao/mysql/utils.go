@@ -23,9 +23,9 @@
 package mysql
 
 import (
-	"github.com/lack-io/vine/lib/dao"
-	"github.com/lack-io/vine/lib/dao/callbacks"
-	"github.com/lack-io/vine/lib/dao/clause"
+	"github.com/vine-io/vine/lib/dao"
+	"github.com/vine-io/vine/lib/dao/callbacks"
+	"github.com/vine-io/vine/lib/dao/clause"
 )
 
 func Update(db *dao.DB) {

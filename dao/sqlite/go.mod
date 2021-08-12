@@ -1,8 +1,8 @@
-module github.com/lack-io/plugins/dao/sqlite
+module github.com/vine-io/plugins/dao/sqlite
 
 go 1.16
 
 require (
-	github.com/lack-io/vine v0.20.12
+	github.com/vine-io/vine v0.20.15
 	github.com/mattn/go-sqlite3 v1.14.7
 )

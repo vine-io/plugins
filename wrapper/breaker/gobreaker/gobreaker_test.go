@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lack-io/vine/core/client"
-	"github.com/lack-io/vine/core/client/grpc"
-	"github.com/lack-io/vine/core/client/selector"
-	"github.com/lack-io/vine/core/registry/memory"
-	"github.com/lack-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/core/client/grpc"
+	"github.com/vine-io/vine/core/client/selector"
+	"github.com/vine-io/vine/core/registry/memory"
+	"github.com/vine-io/vine/proto/apis/errors"
 	"github.com/sony/gobreaker"
 )
 

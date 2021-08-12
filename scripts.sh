@@ -9,7 +9,7 @@ fi
 
 
 tag() {
-  vine="github.com/lack-io/vine"
+  vine="github.com/vine-io/vine"
   mods=$(find . -name "go.mod" | grep -v "vendor")
 
   for mod in $mods;do
@@ -30,7 +30,7 @@ tag() {
 }
 
 vendor() {
-  vine="github.com/lack-io/vine"
+  vine="github.com/vine-io/vine"
   mods=$(find . -name "go.mod" | grep -v "vendor")
 
   root=$PWD

@@ -24,7 +24,7 @@
 package zap
 
 import (
-	"github.com/lack-io/vine/lib/logger"
+	"github.com/vine-io/vine/lib/logger"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
