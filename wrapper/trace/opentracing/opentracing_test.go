@@ -7,6 +7,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/mocktracer"
 	"github.com/stretchr/testify/assert"
+	bmemory "github.com/vine-io/vine/core/broker/memory"
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/core/client/grpc"
 	"github.com/vine-io/vine/core/client/selector"
@@ -64,6 +65,7 @@ func TestClient(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			tracer := mocktracer.New()
 
+			broker := bmemory.NewBroker()
 			registry := memory.NewRegistry()
 			sel := selector.NewSelector(selector.Registry(registry))
 
@@ -80,6 +82,7 @@ func TestClient(t *testing.T) {
 				server.Name(serverName),
 				server.Version(serverVersion),
 				server.Id(serverID),
+				server.Broker(broker),
 				server.Registry(registry),
 				server.WrapSubscriber(NewSubscriberWrapper(tracer)),
 				server.WrapHandler(NewHandlerWrapper(tracer)),

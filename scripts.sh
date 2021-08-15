@@ -14,6 +14,7 @@ tag() {
 
   for mod in $mods;do
     flag=$(cat "$mod" | grep $vine)
+    echo "mod ${mod}"
     if [[ -n $flag ]];then
       v=$(echo "${flag}" | awk -F' ' '{print $NF}')
       dir=$(dirname "$mod")
@@ -35,8 +36,9 @@ vendor() {
 
   root=$PWD
   for mod in $mods;do
+    echo "mod ${mod}"
     dir=$(dirname "$mod")
-    cd "${dir:2}" && go mod vendor
+    cd "${dir:2}" && rm -fr go.sum && go mod vendor
     cd "$root"
   done
 }

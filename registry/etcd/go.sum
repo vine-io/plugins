@@ -128,6 +128,7 @@ github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRW
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c h1:rp5dCmg/yLR3mgFuSOe4oEnDDmGLROTvMragMUXpTQw=
 github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c/go.mod h1:X07ZCGwUbLaax7L0S3Tw4hpejzu63ZrrQiUe6W0hcy0=
+github.com/patrickmn/go-cache v2.1.0+incompatible h1:HRMgzkcYKYpi3C8ajMPV8OFXaaRUnok+kx1WdO15EQc=
 github.com/patrickmn/go-cache v2.1.0+incompatible/go.mod h1:3Qf8kWWT7OJRJbdiICTKqZju1ZixQ/KpMGzzAfe6+WQ=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
@@ -178,8 +179,8 @@ github.com/valyala/tcplisten v0.0.0-20161114210144-ceec8f93295a/go.mod h1:v3UYOV
 github.com/vine-io/cli v1.3.0 h1:mA7UoVVmj5EFF80Gr59KPU4qVLVk6dnDK86QPJ/4bLw=
 github.com/vine-io/cli v1.3.0/go.mod h1:qcr7du65tNdEwzcxvGPn9Gn/RKP/mvIFaYdw6x/Z/R4=
 github.com/vine-io/gscheduler v0.3.0/go.mod h1:Aaq3G56fS4yPLRQRienH3F1yGfStEPrAVLr1os60ZI8=
-github.com/vine-io/vine v0.20.15 h1:uAUbqEUwIAkaFEK1CwjRRu1f2UeCNIygHZmFpAyxgNY=
-github.com/vine-io/vine v0.20.15/go.mod h1:Z7q+qTgVKc96vSsL7XfxUFXMMdWI30kXt7P9auLkDLM=
+github.com/vine-io/vine v0.21.0 h1:+XNsSjJf/RNniE/90JMKmPB782d+05z89mGhPe2iq/g=
+github.com/vine-io/vine v0.21.0/go.mod h1:Z7q+qTgVKc96vSsL7XfxUFXMMdWI30kXt7P9auLkDLM=
 github.com/xlab/treeprint v1.0.0/go.mod h1:IoImgRak9i3zJyuxOKUP1v4UZd1tMoKkq/Cimt1uhCg=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
