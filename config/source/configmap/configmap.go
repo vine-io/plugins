@@ -20,7 +20,7 @@ type configmap struct {
 
 // Predefined variables
 var (
-	DefaultName       = "micro"
+	DefaultName       = "vine"
 	DefaultConfigPath = ""
 	DefaultNamespace  = "default"
 )
