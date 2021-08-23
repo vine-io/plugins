@@ -11,6 +11,7 @@ import (
 	"github.com/vine-io/vine/lib/sync"
 	"go.etcd.io/etcd/client/v3"
 	cc "go.etcd.io/etcd/client/v3/concurrency"
+	"go.uber.org/atomic"
 )
 
 type etcdSync struct {
@@ -18,8 +19,9 @@ type etcdSync struct {
 	path    string
 	client  *clientv3.Client
 
-	mtx   gosync.Mutex
-	locks map[string]*etcdLock
+	curPrimary *atomic.String
+	mtx        gosync.Mutex
+	locks      map[string]*etcdLock
 }
 
 type etcdLock struct {
@@ -32,33 +34,6 @@ type etcdLeader struct {
 	s    *cc.Session
 	e    *cc.Election
 	id   string
-}
-
-func (e *etcdSync) Leader(id string, opts ...sync.LeaderOption) (sync.Leader, error) {
-	var options sync.LeaderOptions
-	for _, o := range opts {
-		o(&options)
-	}
-
-	// make path
-	path := path.Join(e.path, strings.Replace(e.options.Prefix+id, "/", "-", -1))
-
-	s, err := cc.NewSession(e.client)
-	if err != nil {
-		return nil, err
-	}
-
-	l := cc.NewElection(s, path)
-
-	if err := l.Campaign(context.TODO(), id); err != nil {
-		return nil, err
-	}
-
-	return &etcdLeader{
-		opts: options,
-		e:    l,
-		id:   id,
-	}, nil
 }
 
 func (e *etcdLeader) Status() chan bool {
@@ -93,6 +68,61 @@ func (e *etcdSync) Options() sync.Options {
 	return e.options
 }
 
+func (e *etcdSync) Leader(id string, opts ...sync.LeaderOption) (sync.Leader, error) {
+	var options sync.LeaderOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	// make path
+	path := path.Join(e.path, strings.Replace(path.Join(e.options.Prefix, options.Namespace, id), "/", "-", -1))
+
+	s, err := cc.NewSession(e.client)
+	if err != nil {
+		return nil, err
+	}
+
+	l := cc.NewElection(s, path)
+
+	if err = l.Campaign(context.TODO(), id); err != nil {
+		return nil, err
+	}
+
+	e.curPrimary.Store(id)
+
+	return &etcdLeader{
+		opts: options,
+		e:    l,
+		id:   id,
+	}, nil
+}
+
+func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, error) {
+	var options sync.ListMembersOptions
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	members := make([]*sync.Member, 0)
+
+	path := path.Join(e.path, strings.Replace(path.Join(e.options.Prefix, options.Namespace), "/", "-", -1))
+	rsp, err := e.client.Get(context.TODO(), path, clientv3.WithPrefix())
+	if err != nil {
+		return nil, err
+	}
+
+	id := e.curPrimary.Load()
+	for _, kv := range rsp.Kvs {
+		role := sync.Follow
+		if string(kv.Value) == id {
+			role = sync.Primary
+		}
+		members = append(members, &sync.Member{Id: string(kv.Value), Role: role})
+	}
+
+	return members, nil
+}
+
 func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 	var options sync.LockOptions
 	for _, o := range opts {
@@ -114,7 +144,7 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 
 	m := cc.NewMutex(s, path)
 
-	if err := m.Lock(context.TODO()); err != nil {
+	if err = m.Lock(context.TODO()); err != nil {
 		return err
 	}
 
@@ -170,9 +200,10 @@ func NewSync(opts ...sync.Option) sync.Sync {
 	}
 
 	return &etcdSync{
-		path:    "/vine/sync",
-		client:  c,
-		options: options,
-		locks:   make(map[string]*etcdLock),
+		path:       "/vine/sync",
+		client:     c,
+		options:    options,
+		curPrimary: atomic.NewString(""),
+		locks:      make(map[string]*etcdLock),
 	}
 }
