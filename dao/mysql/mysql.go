@@ -32,6 +32,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
+	"github.com/vine-io/vine/lib/cmd"
 	"github.com/vine-io/vine/lib/dao"
 	"github.com/vine-io/vine/lib/dao/callbacks"
 	"github.com/vine-io/vine/lib/dao/clause"
@@ -46,6 +47,10 @@ const (
 	// DefaultStringSize is the default string size for mysql
 	DefaultStringSize uint = 255
 )
+
+func init() {
+	cmd.DefaultDialects[DefaultDriverName] = NewDialect
+}
 
 type Dialect struct {
 	once                      sync.Once

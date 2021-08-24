@@ -26,6 +26,10 @@ import (
 	log "github.com/vine-io/vine/lib/logger"
 )
 
+func init() {
+	cmd.DefaultBrokers["nats"] = NewBroker
+}
+
 type natsBroker struct {
 	sync.Once
 	sync.RWMutex

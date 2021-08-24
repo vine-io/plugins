@@ -31,6 +31,7 @@ import (
 
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
+	"github.com/vine-io/vine/lib/cmd"
 	"github.com/vine-io/vine/lib/dao"
 	"github.com/vine-io/vine/lib/dao/callbacks"
 	"github.com/vine-io/vine/lib/dao/clause"
@@ -45,13 +46,17 @@ const (
 )
 
 type Dialect struct {
-	once sync.Once
+	once                 sync.Once
 	DB                   *dao.DB
 	Opts                 dao.Options
 	DriverName           string
 	Conn                 dao.ConnPool
 	PreferSimpleProtocol bool
 	WithOutReturning     bool
+}
+
+func init() {
+	cmd.DefaultDialects[DefaultDriverName] = NewDialect
 }
 
 func newPGDialect(opts ...dao.Option) dao.Dialect {

@@ -30,6 +30,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	"github.com/vine-io/vine/lib/cmd"
 	"github.com/vine-io/vine/lib/dao"
 	"github.com/vine-io/vine/lib/dao/callbacks"
 	"github.com/vine-io/vine/lib/dao/clause"
@@ -47,6 +48,10 @@ type Dialect struct {
 	Opts       dao.Options
 	DriverName string
 	Conn       dao.ConnPool
+}
+
+func init() {
+	cmd.DefaultDialects[DefaultDriverName] = NewDialect
 }
 
 func newSQLiteDialect(opts ...dao.Option) dao.Dialect {

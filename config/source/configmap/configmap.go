@@ -9,6 +9,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// Predefined variables
+var (
+	DefaultName       = "vine"
+	DefaultConfigPath = ""
+	DefaultNamespace  = "default"
+)
+
 type configmap struct {
 	opts       source.Options
 	client     *kubernetes.Clientset
@@ -17,13 +24,6 @@ type configmap struct {
 	namespace  string
 	configPath string
 }
-
-// Predefined variables
-var (
-	DefaultName       = "vine"
-	DefaultConfigPath = ""
-	DefaultNamespace  = "default"
-)
 
 func (k *configmap) Read() (*source.ChangeSet, error) {
 	if k.cerr != nil {

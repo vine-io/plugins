@@ -6,8 +6,13 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/vine-io/vine/lib/cache"
+	"github.com/vine-io/vine/lib/cmd"
 	log "github.com/vine-io/vine/lib/logger"
 )
+
+func init() {
+	cmd.DefaultCaches["redis"] = NewCache
+}
 
 type rkv struct {
 	ctx     context.Context
