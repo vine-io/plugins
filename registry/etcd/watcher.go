@@ -29,8 +29,6 @@ import (
 
 	"github.com/vine-io/vine/core/registry"
 	"go.etcd.io/etcd/client/v3"
-
-	regpb "github.com/vine-io/vine/proto/apis/registry"
 )
 
 type etcdWatcher struct {
@@ -67,7 +65,7 @@ func newEtcdWatcher(r *etcdRegistry, timeout time.Duration, opts ...registry.Wat
 	}, nil
 }
 
-func (ew *etcdWatcher) Next() (*regpb.Result, error) {
+func (ew *etcdWatcher) Next() (*registry.Result, error) {
 	for wresp := range ew.w {
 		if wresp.Err() != nil {
 			return nil, wresp.Err()
@@ -96,7 +94,7 @@ func (ew *etcdWatcher) Next() (*regpb.Result, error) {
 			if service == nil {
 				continue
 			}
-			return &regpb.Result{
+			return &registry.Result{
 				Action:    action,
 				Service:   service,
 				Timestamp: time.Now().Unix(),

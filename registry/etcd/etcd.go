@@ -38,7 +38,6 @@ import (
 	"github.com/vine-io/vine/core/registry"
 	"github.com/vine-io/vine/lib/cmd"
 	log "github.com/vine-io/vine/lib/logger"
-	regpb "github.com/vine-io/vine/proto/apis/registry"
 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
 	"go.etcd.io/etcd/client/v3"
 )
@@ -121,13 +120,13 @@ func configure(e *etcdRegistry, opts ...registry.Option) error {
 	return nil
 }
 
-func encode(s *regpb.Service) string {
+func encode(s *registry.Service) string {
 	b, _ := json.Marshal(s)
 	return string(b)
 }
 
-func decode(ds []byte) *regpb.Service {
-	var s *regpb.Service
+func decode(ds []byte) *registry.Service {
+	var s *registry.Service
 	json.Unmarshal(ds, &s)
 	return s
 }
@@ -150,7 +149,7 @@ func (e *etcdRegistry) Options() registry.Options {
 	return e.options
 }
 
-func (e *etcdRegistry) registerNode(s *regpb.Service, node *regpb.Node, opts ...registry.RegisterOption) error {
+func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -233,12 +232,12 @@ func (e *etcdRegistry) registerNode(s *regpb.Service, node *regpb.Node, opts ...
 		return nil
 	}
 
-	service := &regpb.Service{
+	service := &registry.Service{
 		Name:      s.Name,
 		Version:   s.Version,
 		Metadata:  s.Metadata,
 		Endpoints: s.Endpoints,
-		Nodes:     []*regpb.Node{node},
+		Nodes:     []*registry.Node{node},
 		Apis:      s.Apis,
 	}
 
@@ -284,7 +283,7 @@ func (e *etcdRegistry) registerNode(s *regpb.Service, node *regpb.Node, opts ...
 	return nil
 }
 
-func (e *etcdRegistry) Deregister(s *regpb.Service, opts ...registry.DeregisterOption) error {
+func (e *etcdRegistry) Deregister(s *registry.Service, opts ...registry.DeregisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("required at lease one node")
 	}
@@ -311,7 +310,7 @@ func (e *etcdRegistry) Deregister(s *regpb.Service, opts ...registry.DeregisterO
 	return nil
 }
 
-func (e *etcdRegistry) Register(s *regpb.Service, opts ...registry.RegisterOption) error {
+func (e *etcdRegistry) Register(s *registry.Service, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -329,7 +328,7 @@ func (e *etcdRegistry) Register(s *regpb.Service, opts ...registry.RegisterOptio
 	return grr
 }
 
-func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*regpb.Service, error) {
+func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*registry.Service, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
 	defer cancel()
 
@@ -342,13 +341,13 @@ func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*r
 		return nil, registry.ErrNotFound
 	}
 
-	serviceMap := map[string]*regpb.Service{}
+	serviceMap := map[string]*registry.Service{}
 
 	for _, n := range rsp.Kvs {
 		if sn := decode(n.Value); sn != nil {
 			s, ok := serviceMap[sn.Version]
 			if !ok {
-				s = &regpb.Service{
+				s = &registry.Service{
 					Name:      sn.Name,
 					Version:   sn.Version,
 					Metadata:  sn.Metadata,
@@ -362,7 +361,7 @@ func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*r
 		}
 	}
 
-	services := make([]*regpb.Service, 0, len(serviceMap))
+	services := make([]*registry.Service, 0, len(serviceMap))
 	for _, service := range serviceMap {
 		services = append(services, service)
 	}
@@ -370,8 +369,8 @@ func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*r
 	return services, nil
 }
 
-func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*regpb.Service, error) {
-	versions := make(map[string]*regpb.Service)
+func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*registry.Service, error) {
+	versions := make(map[string]*registry.Service)
 
 	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
 	defer cancel()
@@ -382,7 +381,7 @@ func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*regpb.Servi
 	}
 
 	if len(rsp.Kvs) == 0 {
-		return []*regpb.Service{}, nil
+		return []*registry.Service{}, nil
 	}
 
 	for _, n := range rsp.Kvs {
@@ -399,9 +398,9 @@ func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*regpb.Servi
 		v.Nodes = append(v.Nodes, sn.Nodes...)
 	}
 
-	services := make([]*regpb.Service, 0, len(versions))
+	services := make([]*registry.Service, 0, len(versions))
 	for _, service := range versions {
-		services = append(services, &regpb.Service{
+		services = append(services, &registry.Service{
 			Name:      service.Name,
 			Version:   service.Version,
 			Metadata:  service.Metadata,

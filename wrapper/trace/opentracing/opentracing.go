@@ -21,8 +21,8 @@ import (
 	"github.com/opentracing/opentracing-go"
 	opentracinglog "github.com/opentracing/opentracing-go/log"
 	"github.com/vine-io/vine/core/client"
+	"github.com/vine-io/vine/core/registry"
 	"github.com/vine-io/vine/core/server"
-	rgpb "github.com/vine-io/vine/proto/apis/registry"
 	"github.com/vine-io/vine/util/context/metadata"
 )
 
@@ -121,7 +121,7 @@ func NewClientWrapper(ot opentracing.Tracer) client.Wrapper {
 // NewCallWrapper accepts an opentracing Tracer and returns a Call Wrapper
 func NewCallWrapper(ot opentracing.Tracer) client.CallWrapper {
 	return func(cf client.CallFunc) client.CallFunc {
-		return func(ctx context.Context, node *rgpb.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
+		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			if ot == nil {
 				ot = opentracing.GlobalTracer()
 			}

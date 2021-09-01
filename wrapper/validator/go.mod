@@ -2,4 +2,4 @@ module github.com/vine-io/plugins/wrapper/validator
 
 go 1.15
 
-require github.com/vine-io/vine v0.22.5
+require github.com/vine-io/vine v1.0.0

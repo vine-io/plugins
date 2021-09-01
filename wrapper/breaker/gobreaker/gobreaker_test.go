@@ -9,7 +9,7 @@ import (
 	"github.com/vine-io/vine/core/client/grpc"
 	"github.com/vine-io/vine/core/client/selector"
 	"github.com/vine-io/vine/core/registry/memory"
-	"github.com/vine-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/lib/errors"
 )
 
 func TestBreaker(t *testing.T) {

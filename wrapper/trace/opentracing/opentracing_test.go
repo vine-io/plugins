@@ -14,7 +14,7 @@ import (
 	"github.com/vine-io/vine/core/registry/memory"
 	"github.com/vine-io/vine/core/server"
 	grpcsvc "github.com/vine-io/vine/core/server/grpc"
-	"github.com/vine-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/lib/errors"
 )
 
 type Test interface {

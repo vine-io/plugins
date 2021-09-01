@@ -19,7 +19,7 @@ import (
 	"github.com/juju/ratelimit"
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/core/server"
-	"github.com/vine-io/vine/proto/apis/errors"
+	"github.com/vine-io/vine/lib/errors"
 )
 
 type clientWrapper struct {
