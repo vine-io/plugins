@@ -63,10 +63,12 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 
 	format := l.opts.Context.Value(encoderJSONKey{})
 
+	zopts := make([]zap.Option, 0)
 	skip, ok := l.opts.Context.Value(callerSkipKey{}).(int)
 	if !ok || skip < 1 {
 		skip = 1
 	}
+	zopts = append(zopts, zap.AddCallerSkip(skip))
 
 	// Set log Level if not default
 	zapConfig.Level = zap.NewAtomicLevel()
@@ -74,7 +76,7 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 		zapConfig.Level.SetLevel(loggerToZapLevel(l.opts.Level))
 	}
 
-	log, err := zapConfig.Build(zap.AddCallerSkip(skip), zap.WrapCore(func(core zapcore.Core) zapcore.Core {
+	zopts = append(zopts, zap.WrapCore(func(core zapcore.Core) zapcore.Core {
 		cfg := zapConfig.EncoderConfig
 		encoder := zapcore.NewConsoleEncoder(cfg)
 		if format != nil {
@@ -83,6 +85,8 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 		cc := zapcore.NewCore(encoder, zapcore.AddSync(os.Stderr), zapConfig.Level)
 		return cc
 	}))
+
+	log, err := zapConfig.Build(zopts...)
 	if err != nil {
 		return err
 	}

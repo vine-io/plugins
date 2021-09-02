@@ -67,4 +67,5 @@ func TestWithFileWriter(t *testing.T) {
 	logger.DefaultLogger = l
 
 	l.Logf(logger.InfoLevel, "test")
+	l.Logf(logger.ErrorLevel, "test")
 }
