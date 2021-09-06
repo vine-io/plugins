@@ -2,6 +2,7 @@ package etcd
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"path"
@@ -11,7 +12,6 @@ import (
 	"github.com/vine-io/vine/lib/sync"
 	"go.etcd.io/etcd/client/v3"
 	cc "go.etcd.io/etcd/client/v3/concurrency"
-	"go.uber.org/atomic"
 )
 
 type etcdSync struct {
@@ -19,9 +19,11 @@ type etcdSync struct {
 	path    string
 	client  *clientv3.Client
 
-	curPrimary *atomic.String
-	mtx        gosync.Mutex
-	locks      map[string]*etcdLock
+	leaderStore map[string]string
+	leaderMtx   gosync.RWMutex
+
+	mtx   gosync.Mutex
+	locks map[string]*etcdLock
 }
 
 type etcdLock struct {
@@ -31,9 +33,15 @@ type etcdLock struct {
 
 type etcdLeader struct {
 	opts sync.LeaderOptions
+	p    *etcdSync
 	s    *cc.Session
 	e    *cc.Election
 	id   string
+}
+
+type Value struct {
+	Namespace string `json:"namespace"`
+	Id        string `json:"id"`
 }
 
 func (e *etcdLeader) Status() chan bool {
@@ -42,7 +50,13 @@ func (e *etcdLeader) Status() chan bool {
 
 	go func() {
 		for r := range ech {
-			if string(r.Kvs[0].Value) != e.id {
+			v, val := r.Kvs[0].Value, &Value{}
+			err := json.Unmarshal(v, &val)
+			if err == nil && val.Id == e.id {
+				e.p.leaderMtx.Lock()
+				e.p.leaderStore[val.Namespace] = val.Id
+				e.p.leaderMtx.Unlock()
+
 				ch <- true
 				close(ch)
 				return
@@ -84,14 +98,22 @@ func (e *etcdSync) Leader(id string, opts ...sync.LeaderOption) (sync.Leader, er
 
 	l := cc.NewElection(s, path)
 
-	if err = l.Campaign(context.TODO(), id); err != nil {
+	val := &Value{
+		Namespace: options.Namespace,
+		Id:        id,
+	}
+	data, _ := json.Marshal(val)
+	if err = l.Campaign(context.TODO(), string(data)); err != nil {
 		return nil, err
 	}
 
-	e.curPrimary.Store(id)
+	e.leaderMtx.Lock()
+	e.leaderStore[options.Namespace] = id
+	e.leaderMtx.Unlock()
 
 	return &etcdLeader{
 		opts: options,
+		p:    e,
 		e:    l,
 		id:   id,
 	}, nil
@@ -111,13 +133,22 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 		return nil, err
 	}
 
-	id := e.curPrimary.Load()
 	for _, kv := range rsp.Kvs {
+		val := &Value{}
+		err := json.Unmarshal(kv.Value, &val)
+		if err != nil {
+			continue
+		}
+
+		e.leaderMtx.RLock()
+		id := e.leaderStore[val.Namespace]
+		e.leaderMtx.RUnlock()
+
 		role := sync.Follow
-		if string(kv.Value) == id {
+		if val.Id == id {
 			role = sync.Primary
 		}
-		members = append(members, &sync.Member{Id: string(kv.Value), Role: role})
+		members = append(members, &sync.Member{Id: val.Id, Namespace: val.Namespace, Role: role})
 	}
 
 	return members, nil
@@ -200,10 +231,10 @@ func NewSync(opts ...sync.Option) sync.Sync {
 	}
 
 	return &etcdSync{
-		path:       "/vine/sync",
-		client:     c,
-		options:    options,
-		curPrimary: atomic.NewString(""),
-		locks:      make(map[string]*etcdLock),
+		path:        "/vine/sync",
+		client:      c,
+		options:     options,
+		leaderStore: map[string]string{},
+		locks:       make(map[string]*etcdLock),
 	}
 }

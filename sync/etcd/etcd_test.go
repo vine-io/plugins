@@ -3,6 +3,8 @@ package etcd
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/vine-io/vine/lib/sync"
 )
 
 func Test_etcdSync_Leader(t *testing.T) {
@@ -46,12 +48,13 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 	}
 
 	id := "lease_member"
-	_, err = s.Leader(id)
+	l, err := s.Leader(id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
+	defer l.Resign()
 
-	members, _ := s.ListMembers()
+	members, _ := s.ListMembers(sync.MemberNS("aa"))
 	b, _ := json.Marshal(members)
 	t.Log(string(b))
 	if len(members) != 1 {

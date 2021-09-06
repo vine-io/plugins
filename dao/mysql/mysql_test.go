@@ -13,7 +13,7 @@ import (
 	"github.com/vine-io/plugins/dao/mysql"
 )
 
-const dns = "test:test@tcp(192.168.2.178:3306)/mysite?charset=utf8&parseTime=True&loc=Local"
+const dns = "root:123456@tcp(192.168.3.111:3306)/vine?charset=utf8&parseTime=True&loc=Local"
 
 func TestNewDialect(t *testing.T) {
 
