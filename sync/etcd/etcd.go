@@ -9,6 +9,7 @@ import (
 	"strings"
 	gosync "sync"
 
+	"github.com/google/uuid"
 	"github.com/vine-io/vine/lib/sync"
 	"go.etcd.io/etcd/client/v3"
 	cc "go.etcd.io/etcd/client/v3/concurrency"
@@ -16,11 +17,8 @@ import (
 
 type etcdSync struct {
 	options sync.Options
-	path    string
+	prefix  string
 	client  *clientv3.Client
-
-	leaderStore map[string]string
-	leaderMtx   gosync.RWMutex
 
 	mtx   gosync.Mutex
 	locks map[string]*etcdLock
@@ -31,17 +29,22 @@ type etcdLock struct {
 	m *cc.Mutex
 }
 
-type etcdLeader struct {
-	opts sync.LeaderOptions
-	p    *etcdSync
-	s    *cc.Session
-	e    *cc.Election
-	id   string
-}
-
 type Value struct {
 	Namespace string `json:"namespace"`
 	Id        string `json:"id"`
+}
+
+type etcdLeader struct {
+	opts   sync.LeaderOptions
+	s      *cc.Session
+	e      *cc.Election
+	prefix string
+	ns     string
+	id     string
+}
+
+func (e *etcdLeader) Id() string {
+	return e.id
 }
 
 func (e *etcdLeader) Status() chan bool {
@@ -50,13 +53,7 @@ func (e *etcdLeader) Status() chan bool {
 
 	go func() {
 		for r := range ech {
-			v, val := r.Kvs[0].Value, &Value{}
-			err := json.Unmarshal(v, &val)
-			if err == nil && val.Id == e.id {
-				e.p.leaderMtx.Lock()
-				e.p.leaderStore[val.Namespace] = val.Id
-				e.p.leaderMtx.Unlock()
-
+			if string(r.Kvs[0].Value) == e.id {
 				ch <- true
 				close(ch)
 				return
@@ -68,6 +65,8 @@ func (e *etcdLeader) Status() chan bool {
 }
 
 func (e *etcdLeader) Resign() error {
+	key := path.Join(e.prefix, "leaders", e.ns, e.id)
+	e.s.Client().Delete(context.TODO(), key)
 	return e.e.Resign(context.Background())
 }
 
@@ -82,40 +81,57 @@ func (e *etcdSync) Options() sync.Options {
 	return e.options
 }
 
-func (e *etcdSync) Leader(id string, opts ...sync.LeaderOption) (sync.Leader, error) {
+func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, error) {
 	var options sync.LeaderOptions
 	for _, o := range opts {
 		o(&options)
 	}
 
+	if options.Id == "" {
+		options.Id = uuid.New().String()
+	}
+
+	if options.TTL == 0 {
+		options.TTL = 30
+	}
+
 	// make path
-	path := path.Join(e.path, strings.Replace(path.Join(e.options.Prefix, options.Namespace, id), "/", "-", -1))
+	cpath := path.Join(e.prefix, strings.Replace(path.Join(e.options.Prefix, options.Namespace, name), "/", "-", -1))
 
 	s, err := cc.NewSession(e.client)
 	if err != nil {
 		return nil, err
 	}
 
-	l := cc.NewElection(s, path)
+	ctx := context.TODO()
+	l := cc.NewElection(s, cpath)
 
-	val := &Value{
+	member := &sync.Member{
+		Leader:    name,
+		Id:        options.Id,
 		Namespace: options.Namespace,
-		Id:        id,
+		Role:      sync.Follow,
 	}
-	data, _ := json.Marshal(val)
-	if err = l.Campaign(context.TODO(), string(data)); err != nil {
+
+	key := path.Join(e.prefix, "leaders", options.Namespace, options.Id)
+	val, _ := json.Marshal(member)
+	_, _ = e.client.Put(ctx, key, string(val))
+
+	if err = l.Campaign(ctx, options.Id); err != nil {
 		return nil, err
 	}
 
-	e.leaderMtx.Lock()
-	e.leaderStore[options.Namespace] = id
-	e.leaderMtx.Unlock()
+	member.Role = sync.Primary
+	val, _ = json.Marshal(member)
+	_, _ = e.client.Put(ctx, key, string(val))
 
 	return &etcdLeader{
-		opts: options,
-		p:    e,
-		e:    l,
-		id:   id,
+		opts:   options,
+		s:      s,
+		e:      l,
+		prefix: e.prefix,
+		ns:     options.Namespace,
+		id:     options.Id,
 	}, nil
 }
 
@@ -127,28 +143,18 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 
 	members := make([]*sync.Member, 0)
 
-	path := path.Join(e.path, strings.Replace(path.Join(e.options.Prefix, options.Namespace), "/", "-", -1))
-	rsp, err := e.client.Get(context.TODO(), path, clientv3.WithPrefix())
+	key := path.Join(e.prefix, "leaders", options.Namespace)
+	rsp, err := e.client.Get(context.TODO(), key, clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
 
 	for _, kv := range rsp.Kvs {
-		val := &Value{}
-		err := json.Unmarshal(kv.Value, &val)
-		if err != nil {
-			continue
+		val := &sync.Member{}
+		err = json.Unmarshal(kv.Value, &val)
+		if err == nil {
+			members = append(members, val)
 		}
-
-		e.leaderMtx.RLock()
-		id := e.leaderStore[val.Namespace]
-		e.leaderMtx.RUnlock()
-
-		role := sync.Follow
-		if val.Id == id {
-			role = sync.Primary
-		}
-		members = append(members, &sync.Member{Id: val.Id, Namespace: val.Namespace, Role: role})
 	}
 
 	return members, nil
@@ -161,7 +167,7 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 	}
 
 	// make path
-	path := path.Join(e.path, strings.Replace(e.options.Prefix+id, "/", "-", -1))
+	key := path.Join(e.prefix, strings.Replace(e.options.Prefix+id, "/", "-", -1))
 
 	var sopts []cc.SessionOption
 	if options.TTL > 0 {
@@ -173,7 +179,7 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 		return err
 	}
 
-	m := cc.NewMutex(s, path)
+	m := cc.NewMutex(s, key)
 
 	if err = m.Lock(context.TODO()); err != nil {
 		return err
@@ -222,6 +228,10 @@ func NewSync(opts ...sync.Option) sync.Sync {
 		endpoints = []string{"http://127.0.0.1:2379"}
 	}
 
+	if options.Prefix == "" {
+		options.Prefix = "/vine/sync"
+	}
+
 	// TODO: parse addresses
 	c, err := clientv3.New(clientv3.Config{
 		Endpoints: endpoints,
@@ -231,10 +241,9 @@ func NewSync(opts ...sync.Option) sync.Sync {
 	}
 
 	return &etcdSync{
-		path:        "/vine/sync",
-		client:      c,
-		options:     options,
-		leaderStore: map[string]string{},
-		locks:       make(map[string]*etcdLock),
+		prefix:  options.Prefix,
+		client:  c,
+		options: options,
+		locks:   make(map[string]*etcdLock),
 	}
 }
