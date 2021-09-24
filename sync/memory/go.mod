@@ -2,4 +2,4 @@ module github.com/vine-io/plugins/sync/memory
 
 go 1.16
 
-require github.com/vine-io/vine v1.2.0
+require github.com/vine-io/vine v1.3.0
