@@ -4,5 +4,5 @@ go 1.15
 
 require (
 	github.com/go-redis/redis/v8 v8.4.11
-	github.com/vine-io/vine v1.3.1
+	github.com/vine-io/vine v1.3.2
 )
