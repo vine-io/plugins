@@ -65,7 +65,7 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 }
 
 func Test_etcdSync_Lock(t *testing.T) {
-	s := NewSync(sync.Nodes("http://192.168.2.80:2379"))
+	s := NewSync()
 	err := s.Init()
 	if err != nil {
 		t.Fatal(err)
@@ -77,10 +77,10 @@ func Test_etcdSync_Lock(t *testing.T) {
 		t.Fatalf("lock %s: %v", lock, err)
 	}
 
-	//err = s.Lock(lock, sync.LockWait(time.Second * 3))
-	//if err != sync.ErrLockTimeout {
-	//	t.Fatalf("lock locked: %v", err)
-	//}
+	err = s.Lock(lock, sync.LockWait(time.Second*3))
+	if err != sync.ErrLockTimeout {
+		t.Fatalf("lock locked: %v", err)
+	}
 
 	err = s.Unlock(lock)
 	if err != nil {
