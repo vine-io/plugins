@@ -181,8 +181,23 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 
 	m := cc.NewMutex(s, key)
 
-	if err = m.Lock(context.TODO()); err != nil {
-		return err
+	ctx := context.TODO()
+	if options.Wait != 0 {
+		ctx, _ = context.WithTimeout(ctx, options.Wait)
+	}
+
+	ech := make(chan error, 1)
+	go func() {
+		ech <- m.Lock(ctx)
+	}()
+
+	select {
+	case <-ctx.Done():
+		return sync.ErrLockTimeout
+	case err = <-ech:
+		if err != nil {
+			return err
+		}
 	}
 
 	e.mtx.Lock()
@@ -220,6 +235,9 @@ func NewSync(opts ...sync.Option) sync.Sync {
 
 	for _, addr := range options.Nodes {
 		if len(addr) > 0 {
+			if !strings.HasPrefix(addr, "http") {
+				addr = "http://" + addr
+			}
 			endpoints = append(endpoints, addr)
 		}
 	}
