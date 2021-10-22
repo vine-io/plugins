@@ -216,7 +216,7 @@ func (e *etcdSync) Unlock(id string) error {
 	if !ok {
 		return errors.New("lock not found")
 	}
-	defer v.s.Client()
+	defer v.s.Close()
 	err := v.m.Unlock(context.Background())
 	delete(e.locks, id)
 	return err
