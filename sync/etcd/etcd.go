@@ -193,11 +193,13 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 
 	select {
 	case <-ctx.Done():
-		return sync.ErrLockTimeout
+		err = sync.ErrLockTimeout
 	case err = <-ech:
-		if err != nil {
-			return err
-		}
+	}
+
+	if err != nil {
+		_ = s.Close()
+		return err
 	}
 
 	e.mtx.Lock()
