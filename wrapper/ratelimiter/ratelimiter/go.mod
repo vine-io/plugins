@@ -4,5 +4,5 @@ go 1.15
 
 require (
 	github.com/juju/ratelimit v1.0.1
-	github.com/vine-io/vine v1.3.3
+	github.com/vine-io/vine v1.3.6
 )
