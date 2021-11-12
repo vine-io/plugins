@@ -3,6 +3,6 @@ module github.com/vine-io/plugins/wrapper/breaker/gobreaker
 go 1.15
 
 require (
-	github.com/vine-io/vine v1.3.6
+	github.com/vine-io/vine v1.4.0
 	github.com/sony/gobreaker v0.4.1
 )
