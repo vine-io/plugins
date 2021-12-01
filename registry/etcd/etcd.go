@@ -69,7 +69,7 @@ func configure(e *etcdRegistry, opts ...registry.Option) error {
 	}
 
 	if e.options.Timeout == 0 {
-		e.options.Timeout = 5 * time.Second
+		e.options.Timeout = 10 * time.Second
 	}
 
 	if e.options.Secure || e.options.TLSConfig != nil {
@@ -251,7 +251,7 @@ func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, op
 
 	var lgr *clientv3.LeaseGrantResponse
 	if options.TTL.Seconds() <= 0 {
-		options.TTL = time.Second * 15
+		options.TTL = time.Second * 30
 	}
 
 	// get a lease used to expire keys since we have a ttl
