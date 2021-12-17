@@ -21,7 +21,7 @@ type etcd struct {
 }
 
 var (
-	DefaultPrefix = "/micro/config/"
+	DefaultPrefix = "/vine/config/"
 )
 
 func (c *etcd) Read() (*source.ChangeSet, error) {
@@ -29,7 +29,7 @@ func (c *etcd) Read() (*source.ChangeSet, error) {
 		return nil, c.cerr
 	}
 
-	rsp, err := c.client.Get(context.Background(), c.prefix, clientv3.WithPrefix())
+	rsp, err := c.client.Get(context.Background(), c.prefix)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (c *etcd) Read() (*source.ChangeSet, error) {
 
 	kvs := make([]*mvccpb.KeyValue, 0, len(rsp.Kvs))
 	for _, v := range rsp.Kvs {
-		kvs = append(kvs, (*mvccpb.KeyValue)(v))
+		kvs = append(kvs, v)
 	}
 
 	data := makeMap(c.opts.Encoder, kvs, c.stripPrefix)
