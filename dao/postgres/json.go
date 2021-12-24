@@ -88,7 +88,15 @@ func (j *jsonQueryExpression) Build(builder clause.Builder) {
 					stmt.AddVar(builder, j.keys[len(j.keys)-1])
 				} else {
 					builder.WriteString(fmt.Sprintf("%s %s ", join(j.column, j.keys...), j.op.String()))
-					stmt.AddVar(builder, j.equalsValue)
+					switch j.equalsValue.(type) {
+					case int, int8, int16, int32, int64,
+						uint, uint8, uint16, uint32, uint64:
+						stmt.AddVar(builder, fmt.Sprintf("%d", j.equalsValue))
+					case float32, float64:
+						stmt.AddVar(builder, fmt.Sprintf("%f", j.equalsValue))
+					default:
+						stmt.AddVar(builder, j.equalsValue)
+					}
 				}
 			}
 
