@@ -38,7 +38,7 @@ vendor() {
   for mod in $mods;do
     echo "mod ${mod}"
     dir=$(dirname "$mod")
-    cd "${dir:2}" && rm -fr go.sum && go mod vendor
+    cd "${dir:2}" && rm -fr go.sum && go mod tidy && go mod vendor
     cd "$root"
   done
 }
