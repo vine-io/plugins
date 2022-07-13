@@ -9,7 +9,7 @@ import (
 )
 
 func Test_etcdSync_Leader(t *testing.T) {
-	s := NewSync(sync.Nodes("192.168.2.80:2379"))
+	s := NewSync()
 	err := s.Init()
 	if err != nil {
 		t.Fatalf("sync init: %v", err)
@@ -39,6 +39,52 @@ func TestEtcdLeader_Resign(t *testing.T) {
 	if err != nil {
 		t.Fatalf("leader resign: %v", err)
 	}
+}
+
+func TestEtcdLeader_Observe(t *testing.T) {
+	s := NewSync(sync.Nodes("192.168.2.190:12379"))
+	err := s.Init()
+	if err != nil {
+		t.Fatalf("sync init: %v", err)
+	}
+
+	id := "lease_resign"
+	leader, err := s.Leader(id)
+	if err != nil {
+		t.Fatalf("leader: %v", err)
+	}
+
+	go func() {
+		for v := range leader.Observe() {
+			t.Logf("%v\n", v)
+		}
+	}()
+
+	stop := make(chan struct{}, 1)
+	go func() {
+		l, _ := s.Leader(id)
+		if l != nil {
+
+			go func() {
+				for v := range l.Observe() {
+					t.Logf("%v\n", v)
+				}
+			}()
+
+			t.Logf("leader %v", l.Id())
+			time.Sleep(time.Second * 2)
+			l.Resign()
+		}
+		stop <- struct{}{}
+	}()
+
+	time.Sleep(time.Second * 1)
+	err = leader.Resign()
+	if err != nil {
+		t.Fatalf("leader resign: %v", err)
+	}
+
+	<-stop
 }
 
 func TestEtcdSync_ListMembers(t *testing.T) {

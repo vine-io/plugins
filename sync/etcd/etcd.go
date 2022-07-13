@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"path"
 	"strings"
@@ -41,10 +42,43 @@ type etcdLeader struct {
 	prefix string
 	ns     string
 	id     string
+
+	stop chan struct{}
 }
 
 func (e *etcdLeader) Id() string {
 	return e.id
+}
+
+func (e *etcdLeader) Resign() error {
+	key := path.Join(e.prefix, "leaders", e.ns, e.id)
+	e.s.Client().Delete(context.TODO(), key)
+	close(e.stop)
+	return e.e.Resign(context.Background())
+}
+
+func (e *etcdLeader) Observe() chan sync.ObserveResult {
+	ch := make(chan sync.ObserveResult, 1)
+	ech := e.e.Observe(context.Background())
+
+	go func() {
+		for {
+			select {
+			case <-e.stop:
+				close(ch)
+				return
+			case r := <-ech:
+				parts := strings.Split(string(r.Kvs[0].Value), ".")
+				ch <- sync.ObserveResult{
+					Namespace: parts[0],
+					Id:        parts[1],
+				}
+			}
+
+		}
+	}()
+
+	return ch
 }
 
 func (e *etcdLeader) Status() chan bool {
@@ -52,22 +86,23 @@ func (e *etcdLeader) Status() chan bool {
 	ech := e.e.Observe(context.Background())
 
 	go func() {
-		for r := range ech {
-			if string(r.Kvs[0].Value) == e.id {
-				ch <- true
+		for {
+			select {
+			case <-e.stop:
 				close(ch)
 				return
+			case r := <-ech:
+				if string(r.Kvs[0].Value) == e.ns+"."+e.id {
+					ch <- true
+					close(ch)
+					return
+				}
 			}
+
 		}
 	}()
 
 	return ch
-}
-
-func (e *etcdLeader) Resign() error {
-	key := path.Join(e.prefix, "leaders", e.ns, e.id)
-	e.s.Client().Delete(context.TODO(), key)
-	return e.e.Resign(context.Background())
 }
 
 func (e *etcdSync) Init(opts ...sync.Option) error {
@@ -94,6 +129,9 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 	if options.TTL == 0 {
 		options.TTL = 30
 	}
+	if options.Namespace == "" {
+		options.Namespace = "default"
+	}
 
 	// make path
 	cpath := path.Join(e.prefix, strings.Replace(path.Join(e.options.Prefix, options.Namespace, name), "/", "-", -1))
@@ -117,7 +155,7 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 	val, _ := json.Marshal(member)
 	_, _ = e.client.Put(ctx, key, string(val))
 
-	if err = l.Campaign(ctx, options.Id); err != nil {
+	if err = l.Campaign(ctx, fmt.Sprintf("%s.%s", options.Namespace, options.Id)); err != nil {
 		return nil, err
 	}
 
@@ -132,6 +170,7 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 		prefix: e.prefix,
 		ns:     options.Namespace,
 		id:     options.Id,
+		stop:   make(chan struct{}),
 	}, nil
 }
 
