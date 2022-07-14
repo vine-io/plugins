@@ -4,12 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"path"
 	"strings"
 	gosync "sync"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/vine-io/vine/lib/sync"
@@ -29,102 +27,6 @@ type etcdSync struct {
 type etcdLock struct {
 	s *cc.Session
 	m *cc.Mutex
-}
-
-type Value struct {
-	Namespace string `json:"namespace"`
-	Id        string `json:"id"`
-}
-
-type etcdLeader struct {
-	opts    sync.LeaderOptions
-	s       *cc.Session
-	e       *cc.Election
-	leaseId clientv3.LeaseID
-	prefix  string
-
-	timer *time.Timer
-	stop  chan struct{}
-}
-
-func (e *etcdLeader) Id() string {
-	return e.opts.Id
-}
-
-func (e *etcdLeader) Resign() error {
-	ctx := context.Background()
-	key := path.Join(e.prefix, "leaders", e.opts.Namespace, e.opts.Id)
-
-	close(e.stop)
-
-	_, err := e.s.Client().Delete(ctx, key)
-	if err != nil {
-		return err
-	}
-	return e.e.Resign(ctx)
-}
-
-func (e *etcdLeader) Observe() chan sync.ObserveResult {
-	ch := make(chan sync.ObserveResult, 1)
-	ech := e.e.Observe(context.Background())
-
-	go func() {
-		for {
-			select {
-			case <-e.stop:
-				close(ch)
-				return
-			case r := <-ech:
-				parts := strings.Split(string(r.Kvs[0].Value), ".")
-				ch <- sync.ObserveResult{
-					Namespace: parts[0],
-					Id:        parts[1],
-				}
-			}
-
-		}
-	}()
-
-	return ch
-}
-
-func (e *etcdLeader) Status() chan bool {
-	ch := make(chan bool, 1)
-	ech := e.e.Observe(context.Background())
-
-	go func() {
-		for {
-			select {
-			case <-e.stop:
-				close(ch)
-				return
-			case r := <-ech:
-				if string(r.Kvs[0].Value) == e.opts.Namespace+"."+e.opts.Id {
-					ch <- true
-					close(ch)
-					return
-				}
-			}
-
-		}
-	}()
-
-	return ch
-}
-
-func (e *etcdLeader) living() {
-	for {
-		select {
-		case <-e.stop:
-			return
-		case <-e.timer.C:
-			options := e.opts
-			ctx := context.TODO()
-
-			e.timer.Reset(time.Second * time.Duration(options.TTL))
-			_, _ = e.s.Client().KeepAliveOnce(ctx, e.leaseId)
-		}
-	}
 }
 
 func (e *etcdSync) Init(opts ...sync.Option) error {
@@ -156,54 +58,25 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 	}
 
 	// make path
-	cpath := path.Join(e.prefix, strings.Replace(path.Join(e.options.Prefix, options.Namespace, name), "/", "-", -1))
+	cpath := path.Join(e.prefix, "leaders", options.Namespace)
 
 	s, err := cc.NewSession(e.client)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx := context.TODO()
 	l := cc.NewElection(s, cpath)
-
-	member := &sync.Member{
-		Leader:    name,
-		Id:        options.Id,
-		Namespace: options.Namespace,
-		Role:      sync.Follow,
-	}
-
-	key := path.Join(e.prefix, "leaders", options.Namespace, options.Id)
-	val, _ := json.Marshal(member)
-
-	lease, err := e.client.Grant(ctx, options.TTL)
-	if err != nil {
-		return nil, err
-	}
-
-	_, _ = e.client.Put(ctx, key, string(val), clientv3.WithLease(lease.ID))
 
 	leader := &etcdLeader{
 		opts:    options,
 		s:       s,
 		e:       l,
 		prefix:  e.prefix,
-		leaseId: lease.ID,
-		timer:   time.NewTimer(time.Second * time.Duration(options.TTL-5)),
-		stop:    make(chan struct{}),
+		name:    name,
+		elected: make(chan struct{}, 1),
+		stop:    make(chan struct{}, 1),
 	}
-	go leader.living()
-
-	if err = l.Campaign(ctx, fmt.Sprintf("%s.%s", options.Namespace, options.Id)); err != nil {
-		return nil, err
-	}
-
-	member.Role = sync.Primary
-	val, _ = json.Marshal(member)
-
-	_, _ = e.client.KeepAlive(ctx, leader.leaseId)
-	leader.timer.Reset(time.Second * time.Duration(options.TTL-5))
-	_, _ = e.client.Put(ctx, key, string(val), clientv3.WithLease(lease.ID))
+	go leader.campaign()
 
 	return leader, nil
 }
@@ -214,6 +87,10 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 		opt(&options)
 	}
 
+	if options.Namespace == "" {
+		options.Namespace = "default"
+	}
+
 	members := make([]*sync.Member, 0)
 
 	key := path.Join(e.prefix, "leaders", options.Namespace)
@@ -222,10 +99,15 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 		return nil, err
 	}
 
-	for _, kv := range rsp.Kvs {
+	for i, kv := range rsp.Kvs {
 		val := &sync.Member{}
 		err = json.Unmarshal(kv.Value, &val)
 		if err == nil {
+			if i == 0 {
+				val.Role = sync.Primary
+			} else {
+				val.Role = sync.Follow
+			}
 			members = append(members, val)
 		}
 	}

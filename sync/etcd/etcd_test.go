@@ -21,6 +21,13 @@ func Test_etcdSync_Leader(t *testing.T) {
 		t.Fatalf("leader: %v", err)
 	}
 
+	go func() {
+		_, err = s.Leader(id, sync.LeaderTTL(20))
+		if err != nil {
+			t.Fatalf("leader: %v", err)
+		}
+	}()
+
 	select {}
 }
 
@@ -91,7 +98,7 @@ func TestEtcdLeader_Observe(t *testing.T) {
 }
 
 func TestEtcdSync_ListMembers(t *testing.T) {
-	s := NewSync()
+	s := NewSync(sync.Nodes("192.168.2.190:12379"))
 	err := s.Init()
 	if err != nil {
 		t.Fatalf("sync init: %v", err)
@@ -103,12 +110,27 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 		t.Fatalf("leader: %v", err)
 	}
 	defer l.Resign()
+	<-l.Status()
+
+	l, err = s.Leader(id, sync.LeaderNS("aa"))
+	if err != nil {
+		t.Fatalf("leader: %v", err)
+	}
+	defer l.Resign()
+
+	l, err = s.Leader(id, sync.LeaderNS("aa"))
+	if err != nil {
+		t.Fatalf("leader: %v", err)
+	}
+	defer l.Resign()
+
+	time.Sleep(time.Second * 3)
 
 	members, _ := s.ListMembers(sync.MemberNS("aa"))
 	b, _ := json.Marshal(members)
 	t.Log(string(b))
-	if len(members) != 1 {
-		t.Fatalf("member number expect %d, got %d", 1, len(members))
+	if len(members) != 3 {
+		t.Fatalf("member number expect %d, got %d", 3, len(members))
 	}
 	t.Logf("member: %v", members[0])
 }
