@@ -9,31 +9,32 @@ import (
 )
 
 func Test_etcdSync_Leader(t *testing.T) {
-	s := NewSync()
+	s := NewSync(sync.Nodes("192.168.2.190:12379", "192.168.2.190:22379", "192.168.2.190:32379"))
 	err := s.Init()
 	if err != nil {
 		t.Fatalf("sync init: %v", err)
 	}
 
 	id := "leader_test"
-	_, err = s.Leader(id)
+	_, err = s.Leader(id, sync.LeaderTTL(15))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
 }
 
 func TestEtcdLeader_Resign(t *testing.T) {
-	s := NewSync()
+	s := NewSync(sync.Nodes("192.168.2.190:12379"))
 	err := s.Init()
 	if err != nil {
 		t.Fatalf("sync init: %v", err)
 	}
 
-	id := "lease_resign"
+	id := "lease_resign2"
 	leader, err := s.Leader(id)
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
+	t.Logf("find new leader")
 
 	err = leader.Resign()
 	if err != nil {
@@ -108,6 +109,38 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 		t.Fatalf("member number expect %d, got %d", 1, len(members))
 	}
 	t.Logf("member: %v", members[0])
+}
+
+func TestEtcdLeader_Watch(t *testing.T) {
+	s := NewSync(sync.Nodes("192.168.2.190:12379"))
+	err := s.Init()
+	if err != nil {
+		t.Fatalf("sync init: %v", err)
+	}
+
+	ns := "testns"
+	watcher, _ := s.WatchElect(sync.WatchNS(ns))
+	defer watcher.Close()
+	go func() {
+		for {
+			m, _ := watcher.Next()
+			t.Log(m)
+		}
+	}()
+
+	id := "lease_resign2"
+	leader, err := s.Leader(id, sync.LeaderNS(ns))
+	if err != nil {
+		t.Fatalf("leader: %v", err)
+	}
+	t.Logf("find new leader")
+
+	err = leader.Resign()
+	if err != nil {
+		t.Fatalf("leader resign: %v", err)
+	}
+
+	time.Sleep(time.Second * 2)
 }
 
 func Test_etcdSync_Lock(t *testing.T) {

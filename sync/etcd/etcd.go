@@ -9,6 +9,7 @@ import (
 	"path"
 	"strings"
 	gosync "sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/vine-io/vine/lib/sync"
@@ -36,22 +37,22 @@ type Value struct {
 }
 
 type etcdLeader struct {
-	opts   sync.LeaderOptions
-	s      *cc.Session
-	e      *cc.Election
-	prefix string
-	ns     string
-	id     string
+	opts    sync.LeaderOptions
+	s       *cc.Session
+	e       *cc.Election
+	leaseId clientv3.LeaseID
+	prefix  string
 
-	stop chan struct{}
+	timer *time.Timer
+	stop  chan struct{}
 }
 
 func (e *etcdLeader) Id() string {
-	return e.id
+	return e.opts.Id
 }
 
 func (e *etcdLeader) Resign() error {
-	key := path.Join(e.prefix, "leaders", e.ns, e.id)
+	key := path.Join(e.prefix, "leaders", e.opts.Namespace, e.opts.Id)
 	e.s.Client().Delete(context.TODO(), key)
 	close(e.stop)
 	return e.e.Resign(context.Background())
@@ -92,7 +93,7 @@ func (e *etcdLeader) Status() chan bool {
 				close(ch)
 				return
 			case r := <-ech:
-				if string(r.Kvs[0].Value) == e.ns+"."+e.id {
+				if string(r.Kvs[0].Value) == e.opts.Namespace+"."+e.opts.Id {
 					ch <- true
 					close(ch)
 					return
@@ -103,6 +104,21 @@ func (e *etcdLeader) Status() chan bool {
 	}()
 
 	return ch
+}
+
+func (e *etcdLeader) living() {
+	for {
+		select {
+		case <-e.stop:
+			return
+		case <-e.timer.C:
+			options := e.opts
+			ctx := context.TODO()
+
+			e.timer.Reset(time.Second * time.Duration(options.TTL))
+			_, _ = e.s.Client().Revoke(ctx, e.leaseId)
+		}
+	}
 }
 
 func (e *etcdSync) Init(opts ...sync.Option) error {
@@ -153,7 +169,24 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 
 	key := path.Join(e.prefix, "leaders", options.Namespace, options.Id)
 	val, _ := json.Marshal(member)
-	_, _ = e.client.Put(ctx, key, string(val))
+
+	lease, err := e.client.Grant(ctx, options.TTL)
+	if err != nil {
+		return nil, err
+	}
+
+	_, _ = e.client.Put(ctx, key, string(val), clientv3.WithLease(lease.ID))
+
+	leader := &etcdLeader{
+		opts:    options,
+		s:       s,
+		e:       l,
+		prefix:  e.prefix,
+		leaseId: lease.ID,
+		timer:   time.NewTimer(time.Second * time.Duration(options.TTL-5)),
+		stop:    make(chan struct{}),
+	}
+	go leader.living()
 
 	if err = l.Campaign(ctx, fmt.Sprintf("%s.%s", options.Namespace, options.Id)); err != nil {
 		return nil, err
@@ -161,17 +194,12 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 
 	member.Role = sync.Primary
 	val, _ = json.Marshal(member)
-	_, _ = e.client.Put(ctx, key, string(val))
 
-	return &etcdLeader{
-		opts:   options,
-		s:      s,
-		e:      l,
-		prefix: e.prefix,
-		ns:     options.Namespace,
-		id:     options.Id,
-		stop:   make(chan struct{}),
-	}, nil
+	_, _ = e.client.KeepAlive(ctx, leader.leaseId)
+	leader.timer.Reset(time.Second * time.Duration(options.TTL-5))
+	_, _ = e.client.Put(ctx, key, string(val), clientv3.WithLease(lease.ID))
+
+	return leader, nil
 }
 
 func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, error) {
@@ -197,6 +225,10 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 	}
 
 	return members, nil
+}
+
+func (e *etcdSync) WatchElect(opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
+	return newEtcdWatcher(e, opts...)
 }
 
 func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
