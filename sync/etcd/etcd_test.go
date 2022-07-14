@@ -20,6 +20,8 @@ func Test_etcdSync_Leader(t *testing.T) {
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
+
+	select {}
 }
 
 func TestEtcdLeader_Resign(t *testing.T) {

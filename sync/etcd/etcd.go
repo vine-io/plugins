@@ -52,10 +52,16 @@ func (e *etcdLeader) Id() string {
 }
 
 func (e *etcdLeader) Resign() error {
+	ctx := context.Background()
 	key := path.Join(e.prefix, "leaders", e.opts.Namespace, e.opts.Id)
-	e.s.Client().Delete(context.TODO(), key)
+
 	close(e.stop)
-	return e.e.Resign(context.Background())
+
+	_, err := e.s.Client().Delete(ctx, key)
+	if err != nil {
+		return err
+	}
+	return e.e.Resign(ctx)
 }
 
 func (e *etcdLeader) Observe() chan sync.ObserveResult {
@@ -116,7 +122,7 @@ func (e *etcdLeader) living() {
 			ctx := context.TODO()
 
 			e.timer.Reset(time.Second * time.Duration(options.TTL))
-			_, _ = e.s.Client().Revoke(ctx, e.leaseId)
+			_, _ = e.s.Client().KeepAliveOnce(ctx, e.leaseId)
 		}
 	}
 }
