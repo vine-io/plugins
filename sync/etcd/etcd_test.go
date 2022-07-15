@@ -105,32 +105,47 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 	}
 
 	id := "lease_member"
-	l, err := s.Leader(id, sync.LeaderNS("aa"))
+	l1, err := s.Leader(id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
-	defer l.Resign()
-	<-l.Status()
+	//defer l1.Resign()
 
-	l, err = s.Leader(id, sync.LeaderNS("aa"))
+	l2, err := s.Leader(id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
-	defer l.Resign()
+	defer l2.Resign()
 
-	l, err = s.Leader(id, sync.LeaderNS("aa"))
+	l3, err := s.Leader(id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
-	defer l.Resign()
+	defer l3.Resign()
 
-	time.Sleep(time.Second * 3)
+	<-l1.Status()
+	time.Sleep(time.Second * 2)
 
 	members, _ := s.ListMembers(sync.MemberNS("aa"))
 	b, _ := json.Marshal(members)
 	t.Log(string(b))
 	if len(members) != 3 {
 		t.Fatalf("member number expect %d, got %d", 3, len(members))
+	}
+	t.Logf("member: %v", members[0])
+
+	_ = l1.Resign()
+	select {
+	case <-l2.Status():
+	case <-l3.Status():
+	}
+	time.Sleep(time.Second * 1)
+
+	members, _ = s.ListMembers(sync.MemberNS("aa"))
+	b, _ = json.Marshal(members)
+	t.Log(string(b))
+	if len(members) != 2 {
+		t.Fatalf("member number expect %d, got %d", 2, len(members))
 	}
 	t.Logf("member: %v", members[0])
 }

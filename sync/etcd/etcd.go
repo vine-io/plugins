@@ -93,17 +93,20 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 
 	members := make([]*sync.Member, 0)
 
+	ctx := context.TODO()
 	key := path.Join(e.prefix, "leaders", options.Namespace)
-	rsp, err := e.client.Get(context.TODO(), key, clientv3.WithPrefix())
+	rsp, err := e.client.Get(ctx, key, clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
 
-	for i, kv := range rsp.Kvs {
+	p, _ := e.client.Get(ctx, path.Join(e.prefix, "primary", options.Namespace))
+
+	for _, kv := range rsp.Kvs {
 		val := &sync.Member{}
 		err = json.Unmarshal(kv.Value, &val)
 		if err == nil {
-			if i == 0 {
+			if p != nil && val.Id == string(p.Kvs[0].Value) {
 				val.Role = sync.Primary
 			} else {
 				val.Role = sync.Follow

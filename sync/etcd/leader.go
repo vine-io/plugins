@@ -3,6 +3,7 @@ package etcd
 import (
 	"context"
 	"encoding/json"
+	"path"
 
 	"github.com/vine-io/vine/lib/sync"
 	cc "go.etcd.io/etcd/client/v3/concurrency"
@@ -58,6 +59,8 @@ func (e *etcdLeader) campaign() {
 		e.err = err
 		return
 	}
+	key := path.Join(e.prefix, "primary", e.opts.Namespace)
+	_, _ = e.s.Client().Put(context.TODO(), key, e.opts.Id)
 	e.elected <- struct{}{}
 }
 
