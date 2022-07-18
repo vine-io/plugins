@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
@@ -28,34 +29,34 @@ func Test_rkv_configure(t *testing.T) {
 	}{
 		{name: "No Url", fields: fields{options: cache.Options{}, Client: nil},
 			wantErr: false, want: wantValues{
-			username: "",
-			password: "",
-			address:  "127.0.0.1:6379",
-		}},
+				username: "",
+				password: "",
+				address:  "127.0.0.1:6379",
+			}},
 		{name: "legacy Url", fields: fields{options: cache.Options{Nodes: []string{"127.0.0.1:6379"}}, Client: nil},
 			wantErr: false, want: wantValues{
-			username: "",
-			password: "",
-			address:  "127.0.0.1:6379",
-		}},
+				username: "",
+				password: "",
+				address:  "127.0.0.1:6379",
+			}},
 		{name: "New Url", fields: fields{options: cache.Options{Nodes: []string{"redis://127.0.0.1:6379"}}, Client: nil},
 			wantErr: false, want: wantValues{
-			username: "",
-			password: "",
-			address:  "127.0.0.1:6379",
-		}},
+				username: "",
+				password: "",
+				address:  "127.0.0.1:6379",
+			}},
 		{name: "Url with Pwd", fields: fields{options: cache.Options{Nodes: []string{"redis://:password@redis:6379"}}, Client: nil},
 			wantErr: false, want: wantValues{
-			username: "",
-			password: "password",
-			address:  "redis:6379",
-		}},
+				username: "",
+				password: "password",
+				address:  "redis:6379",
+			}},
 		{name: "Url with username and Pwd", fields: fields{options: cache.Options{Nodes: []string{"redis://username:password@redis:6379"}}, Client: nil},
 			wantErr: false, want: wantValues{
-			username: "username",
-			password: "password",
-			address:  "redis:6379",
-		}},
+				username: "username",
+				password: "password",
+				address:  "redis:6379",
+			}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,6 +98,7 @@ func Test_Store(t *testing.T) {
 		return
 	}
 
+	ctx := context.Background()
 	key := "myTest"
 	rec := cache.Record{
 		Key:    key,
@@ -104,19 +106,19 @@ func Test_Store(t *testing.T) {
 		Expiry: 2 * time.Minute,
 	}
 
-	err := r.Put(&rec)
+	err := r.Put(ctx, &rec)
 	if err != nil {
 		t.Errorf("Write Erroe. Error: %v", err)
 	}
-	rec1, err := r.Get(key)
+	rec1, err := r.Get(ctx, key)
 	if err != nil {
 		t.Errorf("Read Error. Error: %v\n", err)
 	}
-	err = r.Del(rec1[0].Key)
+	err = r.Del(ctx, rec1[0].Key)
 	if err != nil {
 		t.Errorf("Delete error %v\n", err)
 	}
-	_, err = r.List()
+	_, err = r.List(ctx)
 	if err != nil {
 		t.Errorf("listing error %v\n", err)
 	}

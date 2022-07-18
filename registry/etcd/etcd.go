@@ -59,64 +59,68 @@ var (
 	prefix = "/vine/registry/"
 )
 
-func configure(e *etcdRegistry, opts ...registry.Option) error {
-	config := clientv3.Config{
-		Endpoints: []string{"127.0.0.1:2379"},
-	}
+func configure(e *etcdRegistry, client *clientv3.Client, opts ...registry.Option) error {
 
-	for _, o := range opts {
-		o(&e.options)
-	}
+	var err error
+	if client == nil {
+		config := clientv3.Config{
+			Endpoints: []string{"127.0.0.1:2379"},
+		}
 
-	if e.options.Timeout == 0 {
-		e.options.Timeout = 10 * time.Second
-	}
+		for _, o := range opts {
+			o(&e.options)
+		}
 
-	if e.options.Secure || e.options.TLSConfig != nil {
-		tlsConfig := e.options.TLSConfig
-		if tlsConfig == nil {
-			tlsConfig = &tls.Config{
-				InsecureSkipVerify: true,
+		if e.options.Timeout == 0 {
+			e.options.Timeout = 10 * time.Second
+		}
+
+		if e.options.Secure || e.options.TLSConfig != nil {
+			tlsConfig := e.options.TLSConfig
+			if tlsConfig == nil {
+				tlsConfig = &tls.Config{
+					InsecureSkipVerify: true,
+				}
+			}
+
+			config.TLS = tlsConfig
+		}
+
+		if e.options.Context != nil {
+			u, ok := e.options.Context.Value(authKey{}).(*authCreds)
+			if ok {
+				config.Username = u.Username
+				config.Password = u.Password
 			}
 		}
 
-		config.TLS = tlsConfig
-	}
+		var cAddrs []string
 
-	if e.options.Context != nil {
-		u, ok := e.options.Context.Value(authKey{}).(*authCreds)
-		if ok {
-			config.Username = u.Username
-			config.Password = u.Password
+		for _, address := range e.options.Addrs {
+			if len(address) == 0 {
+				continue
+			}
+			addr, port, err := net.SplitHostPort(address)
+			if ae, ok := err.(*net.AddrError); ok && ae.Err == "missing port in address" {
+				port = "2379"
+				addr = address
+				cAddrs = append(cAddrs, net.JoinHostPort(addr, port))
+			} else if err == nil {
+				cAddrs = append(cAddrs, net.JoinHostPort(addr, port))
+			}
 		}
-	}
 
-	var cAddrs []string
-
-	for _, address := range e.options.Addrs {
-		if len(address) == 0 {
-			continue
+		// if we got addrs then we'll update
+		if len(cAddrs) > 0 {
+			config.Endpoints = cAddrs
 		}
-		addr, port, err := net.SplitHostPort(address)
-		if ae, ok := err.(*net.AddrError); ok && ae.Err == "missing port in address" {
-			port = "2379"
-			addr = address
-			cAddrs = append(cAddrs, net.JoinHostPort(addr, port))
-		} else if err == nil {
-			cAddrs = append(cAddrs, net.JoinHostPort(addr, port))
-		}
+		client, err = clientv3.New(config)
 	}
 
-	// if we got addrs then we'll update
-	if len(cAddrs) > 0 {
-		config.Endpoints = cAddrs
-	}
-
-	cli, err := clientv3.New(config)
 	if err != nil {
 		return err
 	}
-	e.client = cli
+	e.client = client
 	return nil
 }
 
@@ -142,14 +146,14 @@ func servicePath(s string) string {
 }
 
 func (e *etcdRegistry) Init(opts ...registry.Option) error {
-	return configure(e, opts...)
+	return configure(e, e.client, opts...)
 }
 
 func (e *etcdRegistry) Options() registry.Options {
 	return e.options
 }
 
-func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, opts ...registry.RegisterOption) error {
+func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, node *registry.Node, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -161,7 +165,7 @@ func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, op
 
 	if !ok {
 		// missing lease, check if the key exists
-		ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
+		ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 		defer cancel()
 
 		// look for the existing key
@@ -238,7 +242,6 @@ func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, op
 		Metadata:  s.Metadata,
 		Endpoints: s.Endpoints,
 		Nodes:     []*registry.Node{node},
-		Apis:      s.Apis,
 	}
 
 	var options registry.RegisterOptions
@@ -283,7 +286,7 @@ func (e *etcdRegistry) registerNode(s *registry.Service, node *registry.Node, op
 	return nil
 }
 
-func (e *etcdRegistry) Deregister(s *registry.Service, opts ...registry.DeregisterOption) error {
+func (e *etcdRegistry) Deregister(ctx context.Context, s *registry.Service, opts ...registry.DeregisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("required at lease one node")
 	}
@@ -296,7 +299,7 @@ func (e *etcdRegistry) Deregister(s *registry.Service, opts ...registry.Deregist
 		delete(e.leases, s.Name+node.Id)
 		e.Unlock()
 
-		ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
+		ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 
 		log.Infof("Deregistering %s id %s", s.Name, node.Id)
 		_, err := e.client.Delete(ctx, nodePath(s.Name, node.Id))
@@ -310,7 +313,7 @@ func (e *etcdRegistry) Deregister(s *registry.Service, opts ...registry.Deregist
 	return nil
 }
 
-func (e *etcdRegistry) Register(s *registry.Service, opts ...registry.RegisterOption) error {
+func (e *etcdRegistry) Register(ctx context.Context, s *registry.Service, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -319,7 +322,7 @@ func (e *etcdRegistry) Register(s *registry.Service, opts ...registry.RegisterOp
 
 	// registry each node individually
 	for _, node := range s.Nodes {
-		err := e.registerNode(s, node, opts...)
+		err := e.registerNode(ctx, s, node, opts...)
 		if err != nil {
 			grr = err
 		}
@@ -328,7 +331,7 @@ func (e *etcdRegistry) Register(s *registry.Service, opts ...registry.RegisterOp
 	return grr
 }
 
-func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*registry.Service, error) {
+func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...registry.GetOption) ([]*registry.Service, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
 	defer cancel()
 
@@ -352,7 +355,6 @@ func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*r
 					Version:   sn.Version,
 					Metadata:  sn.Metadata,
 					Endpoints: sn.Endpoints,
-					Apis:      sn.Apis,
 				}
 				serviceMap[s.Version] = s
 			}
@@ -369,10 +371,10 @@ func (e *etcdRegistry) GetService(name string, opts ...registry.GetOption) ([]*r
 	return services, nil
 }
 
-func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*registry.Service, error) {
+func (e *etcdRegistry) ListServices(ctx context.Context, opts ...registry.ListOption) ([]*registry.Service, error) {
 	versions := make(map[string]*registry.Service)
 
-	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
+	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
 
 	rsp, err := e.client.Get(ctx, prefix, clientv3.WithPrefix(), clientv3.WithSerializable())
@@ -415,7 +417,7 @@ func (e *etcdRegistry) ListServices(opts ...registry.ListOption) ([]*registry.Se
 	return services, nil
 }
 
-func (e *etcdRegistry) Watch(opts ...registry.WatchOption) (registry.Watcher, error) {
+func (e *etcdRegistry) Watch(ctx context.Context, opts ...registry.WatchOption) (registry.Watcher, error) {
 	return newEtcdWatcher(e, e.options.Timeout, opts...)
 }
 
@@ -429,6 +431,17 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
 	}
-	_ = configure(e, opts...)
+	_ = configure(e, nil, opts...)
+	return e
+}
+
+func NewEtcdRegistry(client *clientv3.Client, opts ...registry.Option) registry.Registry {
+	e := &etcdRegistry{
+		options:  registry.Options{},
+		register: make(map[string]uint64),
+		leases:   make(map[string]clientv3.LeaseID),
+	}
+
+	_ = configure(e, client, opts...)
 	return e
 }

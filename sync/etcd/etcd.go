@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"path"
 	"strings"
 	gosync "sync"
@@ -29,18 +28,59 @@ type etcdLock struct {
 	m *cc.Mutex
 }
 
+func configure(e *etcdSync, client *clientv3.Client, opts ...sync.Option) error {
+	var options sync.Options
+	for _, o := range opts {
+		o(&options)
+	}
+
+	var endpoints []string
+
+	for _, addr := range options.Nodes {
+		if len(addr) > 0 {
+			if !strings.HasPrefix(addr, "http") {
+				addr = "http://" + addr
+			}
+			endpoints = append(endpoints, addr)
+		}
+	}
+
+	if len(endpoints) == 0 {
+		endpoints = []string{"http://127.0.0.1:2379"}
+	}
+
+	if options.Prefix == "" {
+		options.Prefix = "/vine/sync"
+	}
+
+	var err error
+	if client == nil {
+		// TODO: parse addresses
+		client, err = clientv3.New(clientv3.Config{
+			Endpoints: endpoints,
+		})
+	}
+	if err != nil {
+		return err
+	}
+	e.client = client
+
+	return nil
+}
+
 func (e *etcdSync) Init(opts ...sync.Option) error {
 	for _, o := range opts {
 		o(&e.options)
 	}
-	return nil
+
+	return configure(e, e.client, opts...)
 }
 
 func (e *etcdSync) Options() sync.Options {
 	return e.options
 }
 
-func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, error) {
+func (e *etcdSync) Leader(ctx context.Context, name string, opts ...sync.LeaderOption) (sync.Leader, error) {
 	var options sync.LeaderOptions
 	for _, o := range opts {
 		o(&options)
@@ -81,7 +121,7 @@ func (e *etcdSync) Leader(name string, opts ...sync.LeaderOption) (sync.Leader, 
 	return leader, nil
 }
 
-func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, error) {
+func (e *etcdSync) ListMembers(ctx context.Context, opts ...sync.ListMembersOption) ([]*sync.Member, error) {
 	var options sync.ListMembersOptions
 	for _, opt := range opts {
 		opt(&options)
@@ -93,7 +133,6 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 
 	members := make([]*sync.Member, 0)
 
-	ctx := context.TODO()
 	key := path.Join(e.prefix, "leaders", options.Namespace)
 	rsp, err := e.client.Get(ctx, key, clientv3.WithPrefix())
 	if err != nil {
@@ -118,11 +157,11 @@ func (e *etcdSync) ListMembers(opts ...sync.ListMembersOption) ([]*sync.Member, 
 	return members, nil
 }
 
-func (e *etcdSync) WatchElect(opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
+func (e *etcdSync) WatchElect(ctx context.Context, opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
 	return newEtcdWatcher(e, opts...)
 }
 
-func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
+func (e *etcdSync) Lock(ctx context.Context, id string, opts ...sync.LockOption) error {
 	var options sync.LockOptions
 	for _, o := range opts {
 		o(&options)
@@ -143,7 +182,6 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 
 	m := cc.NewMutex(s, key)
 
-	ctx := context.TODO()
 	if options.Wait != 0 {
 		ctx, _ = context.WithTimeout(ctx, options.Wait)
 	}
@@ -173,7 +211,7 @@ func (e *etcdSync) Lock(id string, opts ...sync.LockOption) error {
 	return nil
 }
 
-func (e *etcdSync) Unlock(id string) error {
+func (e *etcdSync) Unlock(ctx context.Context, id string) error {
 	e.mtx.Lock()
 	defer e.mtx.Unlock()
 	v, ok := e.locks[id]
@@ -196,37 +234,26 @@ func NewSync(opts ...sync.Option) sync.Sync {
 		o(&options)
 	}
 
-	var endpoints []string
-
-	for _, addr := range options.Nodes {
-		if len(addr) > 0 {
-			if !strings.HasPrefix(addr, "http") {
-				addr = "http://" + addr
-			}
-			endpoints = append(endpoints, addr)
-		}
-	}
-
-	if len(endpoints) == 0 {
-		endpoints = []string{"http://127.0.0.1:2379"}
-	}
-
-	if options.Prefix == "" {
-		options.Prefix = "/vine/sync"
-	}
-
-	// TODO: parse addresses
-	c, err := clientv3.New(clientv3.Config{
-		Endpoints: endpoints,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return &etcdSync{
+	e := &etcdSync{
 		prefix:  options.Prefix,
-		client:  c,
 		options: options,
 		locks:   make(map[string]*etcdLock),
 	}
+	_ = configure(e, nil, opts...)
+	return e
+}
+
+func NewEtcdSync(client *clientv3.Client, opts ...sync.Option) sync.Sync {
+	var options sync.Options
+	for _, o := range opts {
+		o(&options)
+	}
+
+	e := &etcdSync{
+		prefix:  options.Prefix,
+		options: options,
+		locks:   make(map[string]*etcdLock),
+	}
+	_ = configure(e, client, opts...)
+	return e
 }

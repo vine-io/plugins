@@ -186,7 +186,7 @@ func (n *natsBroker) Options() broker.Options {
 	return n.opts
 }
 
-func (n *natsBroker) Publish(topic string, msg *broker.Message, opts ...broker.PublishOption) error {
+func (n *natsBroker) Publish(ctx context.Context, topic string, msg *broker.Message, opts ...broker.PublishOption) error {
 	n.RLock()
 	defer n.RUnlock()
 

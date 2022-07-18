@@ -210,13 +210,12 @@ func (b *redisBroker) Disconnect() error {
 }
 
 // Publish publishes a message.
-func (b *redisBroker) Publish(topic string, msg *broker.Message, opts ...broker.PublishOption) error {
+func (b *redisBroker) Publish(ctx context.Context, topic string, msg *broker.Message, opts ...broker.PublishOption) error {
 	v, err := b.opts.Codec.Marshal(msg)
 	if err != nil {
 		return err
 	}
 
-	ctx := b.opts.Context
 	conn := b.client.Conn(ctx)
 	err = conn.Publish(ctx, topic, v).Err()
 	conn.Close()

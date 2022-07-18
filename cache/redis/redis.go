@@ -15,7 +15,6 @@ func init() {
 }
 
 type rkv struct {
-	ctx     context.Context
 	options cache.Options
 	Client  *redis.Client
 }
@@ -32,7 +31,7 @@ func (r *rkv) Close() error {
 	return r.Client.Close()
 }
 
-func (r *rkv) Get(key string, opts ...cache.GetOption) ([]*cache.Record, error) {
+func (r *rkv) Get(ctx context.Context, key string, opts ...cache.GetOption) ([]*cache.Record, error) {
 	options := cache.GetOptions{}
 	options.Table = r.options.Table
 
@@ -47,7 +46,7 @@ func (r *rkv) Get(key string, opts ...cache.GetOption) ([]*cache.Record, error) 
 	// TODO suffix
 	if options.Prefix {
 		prefixKey := fmt.Sprintf("%s*", rkey)
-		fkeys, err := r.Client.Keys(r.ctx, prefixKey).Result()
+		fkeys, err := r.Client.Keys(ctx, prefixKey).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +61,7 @@ func (r *rkv) Get(key string, opts ...cache.GetOption) ([]*cache.Record, error) 
 	records := make([]*cache.Record, 0, len(keys))
 
 	for _, rkey = range keys {
-		val, err := r.Client.Get(r.ctx, rkey).Bytes()
+		val, err := r.Client.Get(ctx, rkey).Bytes()
 
 		if err != nil && err == redis.Nil {
 			return nil, cache.ErrNotFound
@@ -74,7 +73,7 @@ func (r *rkv) Get(key string, opts ...cache.GetOption) ([]*cache.Record, error) 
 			return nil, cache.ErrNotFound
 		}
 
-		d, err := r.Client.TTL(r.ctx, rkey).Result()
+		d, err := r.Client.TTL(ctx, rkey).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -89,7 +88,7 @@ func (r *rkv) Get(key string, opts ...cache.GetOption) ([]*cache.Record, error) 
 	return records, nil
 }
 
-func (r *rkv) Del(key string, opts ...cache.DelOption) error {
+func (r *rkv) Del(ctx context.Context, key string, opts ...cache.DelOption) error {
 	options := cache.DelOptions{}
 	options.Table = r.options.Table
 
@@ -98,10 +97,10 @@ func (r *rkv) Del(key string, opts ...cache.DelOption) error {
 	}
 
 	rkey := fmt.Sprintf("%s%s", options.Table, key)
-	return r.Client.Del(r.ctx, rkey).Err()
+	return r.Client.Del(ctx, rkey).Err()
 }
 
-func (r *rkv) Put(record *cache.Record, opts ...cache.PutOption) error {
+func (r *rkv) Put(ctx context.Context, record *cache.Record, opts ...cache.PutOption) error {
 	options := cache.PutOptions{}
 	options.Table = r.options.Table
 
@@ -110,10 +109,10 @@ func (r *rkv) Put(record *cache.Record, opts ...cache.PutOption) error {
 	}
 
 	rkey := fmt.Sprintf("%s%s", options.Table, record.Key)
-	return r.Client.Set(r.ctx, rkey, record.Value, record.Expiry).Err()
+	return r.Client.Set(ctx, rkey, record.Value, record.Expiry).Err()
 }
 
-func (r *rkv) List(opts ...cache.ListOption) ([]string, error) {
+func (r *rkv) List(ctx context.Context, opts ...cache.ListOption) ([]string, error) {
 	options := cache.ListOptions{}
 	options.Table = r.options.Table
 
@@ -121,7 +120,7 @@ func (r *rkv) List(opts ...cache.ListOption) ([]string, error) {
 		o(&options)
 	}
 
-	keys, err := r.Client.Keys(r.ctx, "*").Result()
+	keys, err := r.Client.Keys(ctx, "*").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +143,6 @@ func NewCache(opts ...cache.Option) cache.Cache {
 	}
 
 	s := &rkv{
-		ctx:     context.Background(),
 		options: options,
 	}
 
