@@ -62,17 +62,18 @@ var (
 func configure(e *etcdRegistry, client *clientv3.Client, opts ...registry.Option) error {
 
 	var err error
+
+	for _, o := range opts {
+		o(&e.options)
+	}
+
+	if e.options.Timeout == 0 {
+		e.options.Timeout = 10 * time.Second
+	}
+
 	if client == nil {
 		config := clientv3.Config{
 			Endpoints: []string{"127.0.0.1:2379"},
-		}
-
-		for _, o := range opts {
-			o(&e.options)
-		}
-
-		if e.options.Timeout == 0 {
-			e.options.Timeout = 10 * time.Second
 		}
 
 		if e.options.Secure || e.options.TLSConfig != nil {
@@ -114,6 +115,7 @@ func configure(e *etcdRegistry, client *clientv3.Client, opts ...registry.Option
 		if len(cAddrs) > 0 {
 			config.Endpoints = cAddrs
 		}
+
 		client, err = clientv3.New(config)
 	}
 
@@ -431,7 +433,6 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
 	}
-	_ = configure(e, nil, opts...)
 	return e
 }
 
@@ -442,6 +443,5 @@ func NewEtcdRegistry(client *clientv3.Client, opts ...registry.Option) registry.
 		leases:   make(map[string]clientv3.LeaseID),
 	}
 
-	_ = configure(e, client, opts...)
 	return e
 }
