@@ -239,7 +239,6 @@ func NewSync(opts ...sync.Option) sync.Sync {
 		options: options,
 		locks:   make(map[string]*etcdLock),
 	}
-	_ = configure(e, nil, opts...)
 	return e
 }
 
@@ -254,6 +253,5 @@ func NewEtcdSync(client *clientv3.Client, opts ...sync.Option) sync.Sync {
 		options: options,
 		locks:   make(map[string]*etcdLock),
 	}
-	_ = configure(e, client, opts...)
 	return e
 }
