@@ -1,6 +1,7 @@
 package etcd
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 	"time"
@@ -15,14 +16,15 @@ func Test_etcdSync_Leader(t *testing.T) {
 		t.Fatalf("sync init: %v", err)
 	}
 
+	ctx := context.TODO()
 	id := "leader_test"
-	_, err = s.Leader(id, sync.LeaderTTL(15))
+	_, err = s.Leader(ctx, id, sync.LeaderTTL(15))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
 
 	go func() {
-		_, err = s.Leader(id, sync.LeaderTTL(20))
+		_, err = s.Leader(ctx, id, sync.LeaderTTL(20))
 		if err != nil {
 			t.Fatalf("leader: %v", err)
 		}
@@ -38,8 +40,9 @@ func TestEtcdLeader_Resign(t *testing.T) {
 		t.Fatalf("sync init: %v", err)
 	}
 
+	ctx := context.TODO()
 	id := "lease_resign2"
-	leader, err := s.Leader(id)
+	leader, err := s.Leader(ctx, id)
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
@@ -58,8 +61,9 @@ func TestEtcdLeader_Observe(t *testing.T) {
 		t.Fatalf("sync init: %v", err)
 	}
 
+	ctx := context.TODO()
 	id := "lease_resign"
-	leader, err := s.Leader(id)
+	leader, err := s.Leader(ctx, id)
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
@@ -72,7 +76,7 @@ func TestEtcdLeader_Observe(t *testing.T) {
 
 	stop := make(chan struct{}, 1)
 	go func() {
-		l, _ := s.Leader(id)
+		l, _ := s.Leader(ctx, id)
 		if l != nil {
 
 			go func() {
@@ -104,20 +108,21 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 		t.Fatalf("sync init: %v", err)
 	}
 
+	ctx := context.TODO()
 	id := "lease_member"
-	l1, err := s.Leader(id, sync.LeaderNS("aa"))
+	l1, err := s.Leader(ctx, id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
 	//defer l1.Resign()
 
-	l2, err := s.Leader(id, sync.LeaderNS("aa"))
+	l2, err := s.Leader(ctx, id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
 	defer l2.Resign()
 
-	l3, err := s.Leader(id, sync.LeaderNS("aa"))
+	l3, err := s.Leader(ctx, id, sync.LeaderNS("aa"))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
@@ -126,7 +131,7 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 	<-l1.Status()
 	time.Sleep(time.Second * 2)
 
-	members, _ := s.ListMembers(sync.MemberNS("aa"))
+	members, _ := s.ListMembers(ctx, sync.MemberNS("aa"))
 	b, _ := json.Marshal(members)
 	t.Log(string(b))
 	if len(members) != 3 {
@@ -141,7 +146,7 @@ func TestEtcdSync_ListMembers(t *testing.T) {
 	}
 	time.Sleep(time.Second * 1)
 
-	members, _ = s.ListMembers(sync.MemberNS("aa"))
+	members, _ = s.ListMembers(ctx, sync.MemberNS("aa"))
 	b, _ = json.Marshal(members)
 	t.Log(string(b))
 	if len(members) != 2 {
@@ -157,8 +162,9 @@ func TestEtcdLeader_Watch(t *testing.T) {
 		t.Fatalf("sync init: %v", err)
 	}
 
+	ctx := context.TODO()
 	ns := "testns"
-	watcher, _ := s.WatchElect(sync.WatchNS(ns))
+	watcher, _ := s.WatchElect(ctx, sync.WatchNS(ns))
 	defer watcher.Close()
 	go func() {
 		for {
@@ -168,7 +174,7 @@ func TestEtcdLeader_Watch(t *testing.T) {
 	}()
 
 	id := "lease_resign2"
-	leader, err := s.Leader(id, sync.LeaderNS(ns))
+	leader, err := s.Leader(ctx, id, sync.LeaderNS(ns))
 	if err != nil {
 		t.Fatalf("leader: %v", err)
 	}
@@ -189,18 +195,19 @@ func Test_etcdSync_Lock(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	ctx := context.TODO()
 	lock := "lock23"
-	err = s.Lock(lock, sync.LockTTL(time.Second*10))
+	err = s.Lock(ctx, lock, sync.LockTTL(time.Second*10))
 	if err != nil {
 		t.Fatalf("lock %s: %v", lock, err)
 	}
 
-	err = s.Lock(lock, sync.LockWait(time.Second*3))
+	err = s.Lock(ctx, lock, sync.LockWait(time.Second*3))
 	if err != sync.ErrLockTimeout {
 		t.Fatalf("lock locked: %v", err)
 	}
 
-	err = s.Unlock(lock)
+	err = s.Unlock(ctx, lock)
 	if err != nil {
 		t.Fatalf("unlock: %v", err)
 	}

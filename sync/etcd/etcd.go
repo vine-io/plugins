@@ -29,24 +29,9 @@ type etcdLock struct {
 }
 
 func configure(e *etcdSync, client *clientv3.Client, opts ...sync.Option) error {
-	var options sync.Options
+	options := e.options
 	for _, o := range opts {
 		o(&options)
-	}
-
-	var endpoints []string
-
-	for _, addr := range options.Nodes {
-		if len(addr) > 0 {
-			if !strings.HasPrefix(addr, "http") {
-				addr = "http://" + addr
-			}
-			endpoints = append(endpoints, addr)
-		}
-	}
-
-	if len(endpoints) == 0 {
-		endpoints = []string{"http://127.0.0.1:2379"}
 	}
 
 	if options.Prefix == "" {
@@ -55,7 +40,21 @@ func configure(e *etcdSync, client *clientv3.Client, opts ...sync.Option) error 
 
 	var err error
 	if client == nil {
-		// TODO: parse addresses
+		var endpoints []string
+
+		for _, addr := range options.Nodes {
+			if len(addr) > 0 {
+				if !strings.HasPrefix(addr, "http") {
+					addr = "http://" + addr
+				}
+				endpoints = append(endpoints, addr)
+			}
+		}
+
+		if len(endpoints) == 0 {
+			endpoints = []string{"http://127.0.0.1:2379"}
+		}
+
 		client, err = clientv3.New(clientv3.Config{
 			Endpoints: endpoints,
 		})

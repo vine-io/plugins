@@ -165,10 +165,11 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 	leaseID, ok := e.leases[s.Name+node.Id]
 	e.RUnlock()
 
+	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
+	defer cancel()
+
 	if !ok {
 		// missing lease, check if the key exists
-		ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
-		defer cancel()
 
 		// look for the existing key
 		rsp, err := e.client.Get(ctx, nodePath(s.Name, node.Id), clientv3.WithSerializable())
@@ -251,9 +252,6 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 		o(&options)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
-	defer cancel()
-
 	var lgr *clientv3.LeaseGrantResponse
 	if options.TTL.Seconds() <= 0 {
 		options.TTL = time.Second * 30
@@ -334,7 +332,7 @@ func (e *etcdRegistry) Register(ctx context.Context, s *registry.Service, opts .
 }
 
 func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...registry.GetOption) ([]*registry.Service, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), e.options.Timeout)
+	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
 
 	rsp, err := e.client.Get(ctx, servicePath(name)+"/", clientv3.WithPrefix(), clientv3.WithSerializable())
@@ -438,6 +436,7 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 
 func NewEtcdRegistry(client *clientv3.Client, opts ...registry.Option) registry.Registry {
 	e := &etcdRegistry{
+		client:   client,
 		options:  registry.Options{},
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
