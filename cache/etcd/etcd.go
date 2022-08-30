@@ -132,7 +132,7 @@ func (e *etcdCache) Get(ctx context.Context, key string, opts ...cache.GetOption
 		return nil, err
 	}
 
-	records := make([]*cache.Record, 0, rsp.Count)
+	records := make([]*cache.Record, rsp.Count)
 	for i, kv := range rsp.Kvs {
 		record := cache.Record{}
 		_ = json.Unmarshal(kv.Value, &record)
@@ -143,13 +143,68 @@ func (e *etcdCache) Get(ctx context.Context, key string, opts ...cache.GetOption
 }
 
 func (e *etcdCache) Put(ctx context.Context, r *cache.Record, opts ...cache.PutOption) error {
-	//TODO implement me
-	panic("implement me")
+	var options cache.PutOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	opOpts := make([]clientv3.OpOption, 0)
+
+	pre := prefix
+	if options.Database != "" {
+		pre = path.Join(pre, options.Database)
+	}
+	if options.Table != "" {
+		pre = path.Join(pre, options.Table)
+	}
+
+	if options.TTL != 0 || !options.Expiry.IsZero() {
+		now := time.Now()
+		if options.TTL != 0 {
+			r.Expiry = options.TTL
+		} else if options.Expiry.After(now) {
+			r.Expiry = options.Expiry.Sub(now)
+		}
+		rsp, err := e.client.Grant(ctx, int64(r.Expiry.Seconds()))
+		if err != nil {
+			return err
+		}
+		opOpts = append(opOpts, clientv3.WithLease(rsp.ID))
+	}
+
+	key := path.Join(pre, r.Key)
+	val, _ := json.Marshal(r)
+	_, err := e.client.Put(ctx, key, string(val), opOpts...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (e *etcdCache) Del(ctx context.Context, key string, opts ...cache.DelOption) error {
-	//TODO implement me
-	panic("implement me")
+	var options cache.DelOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	pre := prefix
+	opOpts := make([]clientv3.OpOption, 0)
+
+	if options.Database != "" {
+		pre = path.Join(pre, options.Database)
+	}
+	if options.Table != "" {
+		pre = path.Join(pre, options.Table)
+	}
+
+	key = path.Join(pre, key)
+	_, err := e.client.Delete(ctx, key, opOpts...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (e *etcdCache) List(ctx context.Context, opts ...cache.ListOption) ([]string, error) {
@@ -160,10 +215,9 @@ func (e *etcdCache) List(ctx context.Context, opts ...cache.ListOption) ([]strin
 
 	key := prefix
 	opOpts := make([]clientv3.OpOption, 0)
-	opOpts = append(opOpts, clientv3.WithKeysOnly())
+	opOpts = append(opOpts, clientv3.WithKeysOnly(), clientv3.WithPrefix())
 
 	if options.Prefix != "" {
-		opOpts = append(opOpts, clientv3.WithPrefix())
 		key = path.Join(key, options.Prefix)
 	}
 
@@ -182,7 +236,7 @@ func (e *etcdCache) List(ctx context.Context, opts ...cache.ListOption) ([]strin
 		return nil, err
 	}
 
-	outs := make([]string, 0, rsp.Count)
+	outs := make([]string, rsp.Count)
 	for i, kv := range rsp.Kvs {
 		outs[i] = string(kv.Key)
 	}
