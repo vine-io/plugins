@@ -3,7 +3,8 @@ module github.com/vine-io/plugins/cache/etcd
 go 1.18
 
 require (
-	github.com/vine-io/vine v1.4.10
+	github.com/json-iterator/go v1.1.12
+	github.com/vine-io/vine v1.4.11
 	go.etcd.io/etcd/client/v3 v3.5.0
 )
 
@@ -23,7 +24,6 @@ require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.1 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/miekg/dns v1.1.50 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
