@@ -250,6 +250,7 @@ func NewEtcdSync(client *clientv3.Client, opts ...sync.Option) sync.Sync {
 	e := &etcdSync{
 		prefix:  options.Prefix,
 		options: options,
+		client:  client,
 		locks:   make(map[string]*etcdLock),
 	}
 	return e
