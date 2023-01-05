@@ -36,10 +36,11 @@ vendor() {
 
   root=$PWD
   for mod in $mods;do
-    echo "mod ${mod}"
+    version=$(cat ${mod} | grep -e "^go " | awk -F' ' '{print $2}')
+    echo "mod ${mod} version=go:${version}"
     dir=$(dirname "$mod")
-    cd "${dir:2}" && rm -fr go.sum && go mod tidy && go mod vendor
-    cd "$root"
+    cd "${dir:2}" && rm -fr vendor && rm -fr go.sum && go mod tidy -compat=${version} && go mod vendor
+    cd "${root}"
   done
 }
 

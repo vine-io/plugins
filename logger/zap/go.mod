@@ -1,10 +1,10 @@
 module github.com/vine-io/plugins/logger/zap
 
-go 1.17
+go 1.18
 
 require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/vine-io/vine v1.4.14
+	github.com/vine-io/vine v1.4.15
 	go.uber.org/zap v1.22.0
 )
 
