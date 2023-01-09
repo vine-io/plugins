@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/mattn/go-sqlite3 v1.14.7
-	github.com/vine-io/vine v1.4.15
+	github.com/vine-io/vine v1.4.16
 )
 
 require (

@@ -3,7 +3,7 @@ module github.com/vine-io/plugins/config/source/configmap
 go 1.18
 
 require (
-	github.com/vine-io/vine v1.4.15
+	github.com/vine-io/vine v1.4.16
 	k8s.io/api v0.22.0
 	k8s.io/apimachinery v0.22.0
 	k8s.io/client-go v0.22.0
