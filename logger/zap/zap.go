@@ -35,15 +35,33 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type zaplog struct {
-	cfg  zap.Config
-	zap  *zap.Logger
-	opts logger.Options
+type ZapLog struct {
+	cfg    zap.Config
+	logger *zap.Logger
+	opts   logger.Options
 	sync.RWMutex
 	fields map[string]interface{}
 }
 
-func (l *zaplog) Init(opts ...logger.Option) error {
+// New builds a new logger based on options
+func New(opts ...logger.Option) (*ZapLog, error) {
+	// Default options
+	options := logger.Options{
+		Level:   logger.InfoLevel,
+		Fields:  make(map[string]interface{}),
+		Out:     os.Stderr,
+		Context: context.Background(),
+	}
+
+	l := &ZapLog{opts: options}
+	if err := l.Init(opts...); err != nil {
+		return nil, err
+	}
+
+	return l, nil
+}
+
+func (l *ZapLog) Init(opts ...logger.Option) error {
 	var err error
 
 	for _, o := range opts {
@@ -132,13 +150,13 @@ func (l *zaplog) Init(opts ...logger.Option) error {
 	// defer log.Sync() ??
 
 	l.cfg = zapConfig
-	l.zap = log
+	l.logger = log
 	l.fields = make(map[string]interface{})
 
 	return nil
 }
 
-func (l *zaplog) Fields(fields map[string]interface{}) logger.Logger {
+func (l *ZapLog) Fields(fields map[string]interface{}) logger.Logger {
 	l.Lock()
 	nfields := make(map[string]interface{}, len(l.fields))
 	for k, v := range fields {
@@ -150,9 +168,9 @@ func (l *zaplog) Fields(fields map[string]interface{}) logger.Logger {
 		data = append(data, zap.Any(k, v))
 	}
 
-	zl := &zaplog{
+	zl := &ZapLog{
 		cfg:    l.cfg,
-		zap:    l.zap.With(data...),
+		logger: l.logger.With(data...),
 		opts:   l.opts,
 		fields: make(map[string]interface{}),
 	}
@@ -160,15 +178,19 @@ func (l *zaplog) Fields(fields map[string]interface{}) logger.Logger {
 	return zl
 }
 
-func (l *zaplog) Error(err error) logger.Logger {
+func (l *ZapLog) Error(err error) logger.Logger {
 	return l.Fields(map[string]interface{}{"error": err})
 }
 
-func (l *zaplog) Options() logger.Options {
+func (l *ZapLog) Options() logger.Options {
 	return l.opts
 }
 
-func (l *zaplog) Log(level logger.Level, args ...interface{}) {
+func (l *ZapLog) GetLogger() *zap.Logger {
+	return l.logger
+}
+
+func (l *ZapLog) Log(level logger.Level, args ...interface{}) {
 	l.RLock()
 	data := make([]zap.Field, 0, len(l.fields))
 	for k, v := range l.fields {
@@ -180,19 +202,19 @@ func (l *zaplog) Log(level logger.Level, args ...interface{}) {
 	msg := fmt.Sprint(args...)
 	switch lvl {
 	case zap.DebugLevel:
-		l.zap.Debug(msg, data...)
+		l.logger.Debug(msg, data...)
 	case zap.InfoLevel:
-		l.zap.Info(msg, data...)
+		l.logger.Info(msg, data...)
 	case zap.WarnLevel:
-		l.zap.Warn(msg, data...)
+		l.logger.Warn(msg, data...)
 	case zap.ErrorLevel:
-		l.zap.Error(msg, data...)
+		l.logger.Error(msg, data...)
 	case zap.FatalLevel:
-		l.zap.Fatal(msg, data...)
+		l.logger.Fatal(msg, data...)
 	}
 }
 
-func (l *zaplog) Logf(level logger.Level, format string, args ...interface{}) {
+func (l *ZapLog) Logf(level logger.Level, format string, args ...interface{}) {
 	l.RLock()
 	data := make([]zap.Field, 0, len(l.fields))
 	for k, v := range l.fields {
@@ -204,40 +226,22 @@ func (l *zaplog) Logf(level logger.Level, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	switch lvl {
 	case zap.DebugLevel:
-		l.zap.Debug(msg, data...)
+		l.logger.Debug(msg, data...)
 	case zap.InfoLevel:
-		l.zap.Info(msg, data...)
+		l.logger.Info(msg, data...)
 	case zap.WarnLevel:
-		l.zap.Warn(msg, data...)
+		l.logger.Warn(msg, data...)
 	case zap.ErrorLevel:
-		l.zap.Error(msg, data...)
+		l.logger.Error(msg, data...)
 	case zap.FatalLevel:
-		l.zap.Fatal(msg, data...)
+		l.logger.Fatal(msg, data...)
 	}
 }
 
-func (l *zaplog) Sync() error {
-	return l.zap.Sync()
+func (l *ZapLog) Sync() error {
+	return l.logger.Sync()
 }
 
-func (l *zaplog) String() string {
+func (l *ZapLog) String() string {
 	return "zap"
-}
-
-// New builds a new logger based on options
-func New(opts ...logger.Option) (*zaplog, error) {
-	// Default options
-	options := logger.Options{
-		Level:   logger.InfoLevel,
-		Fields:  make(map[string]interface{}),
-		Out:     os.Stderr,
-		Context: context.Background(),
-	}
-
-	l := &zaplog{opts: options}
-	if err := l.Init(opts...); err != nil {
-		return nil, err
-	}
-
-	return l, nil
 }

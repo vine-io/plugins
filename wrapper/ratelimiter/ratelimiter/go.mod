@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/juju/ratelimit v1.0.1
-	github.com/vine-io/vine v1.4.16
+	github.com/vine-io/vine v1.4.17
 )
 
 require (

@@ -1,4 +1,4 @@
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/vine-io/vine v1.4.16 h1:JaBeJnx89W4mAWQ38yV1cNbLskSmLpWQsR1OMU4pKFU=
-github.com/vine-io/vine v1.4.16/go.mod h1:KvAu2xHKPZ3qUT2eNaZbvOWhkCXfpHyz6ga9cbvtLYk=
+github.com/vine-io/vine v1.4.17 h1:HOvi8GwYTR0UofwYO46SDED+ts+hTG9qDh2cyRIP2ZE=
+github.com/vine-io/vine v1.4.17/go.mod h1:KvAu2xHKPZ3qUT2eNaZbvOWhkCXfpHyz6ga9cbvtLYk=

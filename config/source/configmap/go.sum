@@ -200,8 +200,8 @@ github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81P
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
-github.com/vine-io/vine v1.4.16 h1:JaBeJnx89W4mAWQ38yV1cNbLskSmLpWQsR1OMU4pKFU=
-github.com/vine-io/vine v1.4.16/go.mod h1:KvAu2xHKPZ3qUT2eNaZbvOWhkCXfpHyz6ga9cbvtLYk=
+github.com/vine-io/vine v1.4.17 h1:HOvi8GwYTR0UofwYO46SDED+ts+hTG9qDh2cyRIP2ZE=
+github.com/vine-io/vine v1.4.17/go.mod h1:KvAu2xHKPZ3qUT2eNaZbvOWhkCXfpHyz6ga9cbvtLYk=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
