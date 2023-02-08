@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/json-iterator/go v1.1.12
-	github.com/vine-io/vine v1.4.17
+	github.com/vine-io/vine v1.4.19
 	go.etcd.io/etcd/client/v3 v3.5.0
 )
 
