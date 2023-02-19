@@ -24,21 +24,27 @@ type optionsKeyType struct{}
 
 func Timeout(d time.Duration) broker.Option {
 	return func(o *broker.Options) {
-		bo := o.Context.Value(optionsKey).(*brokerOptions)
-		bo.timeout = d
+		bo, ok := o.Context.Value(optionsKey).(*brokerOptions)
+		if ok {
+			bo.timeout = d
+		}
 	}
 }
 
 func Auth(username, password string) broker.Option {
 	return func(o *broker.Options) {
-		bo := o.Context.Value(optionsKey).(*brokerOptions)
-		bo.username, bo.password = username, password
+		bo, ok := o.Context.Value(optionsKey).(*brokerOptions)
+		if ok {
+			bo.username, bo.password = username, password
+		}
 	}
 }
 
 func Prefix(prefix string) broker.Option {
 	return func(o *broker.Options) {
-		bo := o.Context.Value(optionsKey).(*brokerOptions)
-		bo.prefix = prefix
+		bo, ok := o.Context.Value(optionsKey).(*brokerOptions)
+		if ok {
+			bo.prefix = prefix
+		}
 	}
 }

@@ -3,8 +3,8 @@ module github.com/vine-io/plugins/sync/etcd
 go 1.18
 
 require (
-	github.com/google/uuid v1.2.0
-	github.com/vine-io/vine v1.4.19
+	github.com/google/uuid v1.3.0
+	github.com/vine-io/vine v1.4.20
 	go.etcd.io/etcd/client/v3 v3.5.0
 )
 
@@ -13,6 +13,7 @@ require (
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.0 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
@@ -21,7 +22,7 @@ require (
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
-	google.golang.org/grpc v1.47.0 // indirect
+	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
+	google.golang.org/grpc v1.52.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )

@@ -42,8 +42,15 @@ import (
 	"go.etcd.io/etcd/client/v3"
 )
 
+var (
+	prefix = "/vine/registry/"
+)
+
 func init() {
 	cmd.DefaultRegistries["etcd"] = NewRegistry
+
+	registry.Flag.String("registry.etcd.username", "", "Sets the username for client of etcdv3")
+	registry.Flag.String("registry.etcd.password", "", "Sets the password for client of etcdv3")
 }
 
 type etcdRegistry struct {
@@ -54,10 +61,6 @@ type etcdRegistry struct {
 	register map[string]uint64
 	leases   map[string]clientv3.LeaseID
 }
-
-var (
-	prefix = "/vine/registry/"
-)
 
 func configure(e *etcdRegistry, client *clientv3.Client, opts ...registry.Option) error {
 
