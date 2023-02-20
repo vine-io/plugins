@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/vine-io/vine v1.4.20
+	github.com/vine-io/vine v1.4.21
 )
 
 require (

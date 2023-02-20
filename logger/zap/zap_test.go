@@ -53,7 +53,7 @@ func TestWithFileWriter(t *testing.T) {
 	//	MaxAge:     28, //days
 	//	Compress:   true, // disabled by default
 
-	l, err := New(WithFileWriter(FileWriter{
+	l, err := New(WithJSONEncode(), WithFileWriter(FileWriter{
 		FileName:   "test.log",
 		MaxSize:    1,
 		MaxBackups: 5,
@@ -68,4 +68,5 @@ func TestWithFileWriter(t *testing.T) {
 
 	l.Logf(logger.InfoLevel, "test")
 	l.Logf(logger.ErrorLevel, "test")
+	l.Logf(logger.FatalLevel, "fatal info")
 }

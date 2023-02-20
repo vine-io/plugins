@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/jackc/pgx/v4 v4.11.0
-	github.com/vine-io/vine v1.4.20
+	github.com/vine-io/vine v1.4.21
 )
 
 require (
