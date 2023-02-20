@@ -3,7 +3,7 @@ module github.com/vine-io/plugins/broker/etcd
 go 1.18
 
 require (
-	github.com/vine-io/vine v1.4.21
+	github.com/vine-io/vine v1.5.0
 	go.etcd.io/etcd/client/v3 v3.5.6
 )
 
