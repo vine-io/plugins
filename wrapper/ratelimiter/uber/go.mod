@@ -3,7 +3,7 @@ module github.com/vine-io/plugins/wrapper/ratelimiter/uber
 go 1.18
 
 require (
-	github.com/vine-io/vine v1.5.0
+	github.com/vine-io/vine v1.5.1
 	go.uber.org/ratelimit v0.1.0
 )
 
