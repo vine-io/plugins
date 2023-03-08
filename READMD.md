@@ -9,11 +9,6 @@ Broker 插件:
 - [nats](https://github.com/vine-io/plugins/tree/main/broker/nats)
 - [redis](https://github.com/vine-io/plugins/tree/main/broker/redis)
 
-Dao 插件:
-- [mysql](https://github.com/vine-io/plugins/tree/main/dao/mysql)
-- [postgresql](https://github.com/vine-io/plugins/tree/main/dao/postgres)
-- [sqlite](https://github.com/vine-io/plugins/tree/main/dao/sqlite)
-
 Cache 插件:
 - [redis](https://github.com/vine-io/plugins/tree/main/cache/redis)
 
