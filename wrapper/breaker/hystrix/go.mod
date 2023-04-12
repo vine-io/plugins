@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
-	github.com/vine-io/vine v1.5.10
+	github.com/vine-io/vine v1.6.0
 )
 
 require (
