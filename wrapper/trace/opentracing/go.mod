@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/stretchr/testify v1.8.1
-	github.com/vine-io/vine v1.6.0
+	github.com/vine-io/vine v1.6.3
 )
 
 require (
