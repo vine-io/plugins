@@ -25,6 +25,7 @@ package etcd
 import (
 	"context"
 	"errors"
+	"path"
 	"time"
 
 	"github.com/vine-io/vine/core/registry"
@@ -52,9 +53,16 @@ func newEtcdWatcher(r *etcdRegistry, timeout time.Duration, opts ...registry.Wat
 		cancel()
 	}()
 
+	namespace := r.options.Namespace
+	if wo.Namespace != "" {
+		namespace = wo.Namespace
+	}
+
 	watchPath := prefix
 	if len(wo.Service) > 0 {
-		watchPath = servicePath(wo.Service) + "/"
+		watchPath = servicePath(namespace, wo.Service) + "/"
+	} else {
+		watchPath = path.Join(prefix, namespace) + "/"
 	}
 
 	return &etcdWatcher{

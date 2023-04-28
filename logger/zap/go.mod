@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/vine-io/vine v1.6.5
+	github.com/vine-io/vine v1.6.6
 	go.uber.org/zap v1.24.0
 )
 

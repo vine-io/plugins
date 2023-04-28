@@ -140,14 +140,14 @@ func decode(ds []byte) *registry.Service {
 	return s
 }
 
-func nodePath(s, id string) string {
-	service := strings.Replace(s, "/", "-", -1)
-	node := strings.Replace(id, "/", "-", -1)
-	return path.Join(prefix, service, node)
+func nodePath(ns, s, id string) string {
+	service := strings.ReplaceAll(s, "/", "-")
+	node := strings.ReplaceAll(id, "/", "-")
+	return path.Join(prefix, ns, service, node)
 }
 
-func servicePath(s string) string {
-	return path.Join(prefix, strings.Replace(s, "/", "-", -1))
+func servicePath(ns, s string) string {
+	return path.Join(prefix, ns, strings.Replace(s, "/", "-", -1))
 }
 
 func (e *etcdRegistry) Init(opts ...registry.Option) error {
@@ -168,14 +168,24 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 	leaseID, ok := e.leases[s.Name+node.Id]
 	e.RUnlock()
 
+	var options registry.RegisterOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
 	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
+
+	namespace := e.options.Namespace
+	if options.Namespace != "" {
+		namespace = options.Namespace
+	}
 
 	if !ok {
 		// missing lease, check if the key exists
 
 		// look for the existing key
-		rsp, err := e.client.Get(ctx, nodePath(s.Name, node.Id), clientv3.WithSerializable())
+		rsp, err := e.client.Get(ctx, nodePath(namespace, s.Name, node.Id), clientv3.WithSerializable())
 		if err != nil {
 			return err
 		}
@@ -242,17 +252,17 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 		return nil
 	}
 
+	if s.Namespace == "" {
+		s.Namespace = namespace
+	}
+
 	service := &registry.Service{
 		Name:      s.Name,
 		Version:   s.Version,
+		Namespace: s.Namespace,
 		Metadata:  s.Metadata,
 		Endpoints: s.Endpoints,
 		Nodes:     []*registry.Node{node},
-	}
-
-	var options registry.RegisterOptions
-	for _, o := range opts {
-		o(&options)
 	}
 
 	var lgr *clientv3.LeaseGrantResponse
@@ -266,12 +276,12 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 		return err
 	}
 
-	log.Infof("Registering %s id %s with lease %v and leaseID %v and ttl %v", service.Name, node.Id, lgr, lgr.ID, options.TTL)
+	log.Infof("Registering %s namespace %s id %s with lease %v and leaseID %v and ttl %v", service.Name, service.Namespace, node.Id, lgr, lgr.ID, options.TTL)
 	// create an entry for the node
 	if lgr != nil {
-		_, err = e.client.Put(ctx, nodePath(service.Name, node.Id), encode(service), clientv3.WithLease(lgr.ID))
+		_, err = e.client.Put(ctx, nodePath(service.Namespace, service.Name, node.Id), encode(service), clientv3.WithLease(lgr.ID))
 	} else {
-		_, err = e.client.Put(ctx, nodePath(service.Name, node.Id), encode(service))
+		_, err = e.client.Put(ctx, nodePath(service.Namespace, service.Name, node.Id), encode(service))
 	}
 	if err != nil {
 		return err
@@ -294,6 +304,20 @@ func (e *etcdRegistry) Deregister(ctx context.Context, s *registry.Service, opts
 		return errors.New("required at lease one node")
 	}
 
+	var options registry.DeregisterOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	namespace := e.options.Namespace
+	if options.Namespace != "" {
+		namespace = options.Namespace
+	}
+
+	if s.Namespace == "" {
+		s.Namespace = namespace
+	}
+
 	for _, node := range s.Nodes {
 		e.Lock()
 		// delete our hash of the service
@@ -305,7 +329,7 @@ func (e *etcdRegistry) Deregister(ctx context.Context, s *registry.Service, opts
 		ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 
 		log.Infof("Deregistering %s id %s", s.Name, node.Id)
-		_, err := e.client.Delete(ctx, nodePath(s.Name, node.Id))
+		_, err := e.client.Delete(ctx, nodePath(namespace, s.Name, node.Id))
 		if err != nil {
 			cancel()
 			return err
@@ -338,7 +362,17 @@ func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...regi
 	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
 
-	rsp, err := e.client.Get(ctx, servicePath(name)+"/", clientv3.WithPrefix(), clientv3.WithSerializable())
+	var options registry.GetOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	namespace := e.options.Namespace
+	if options.Namespace != "" {
+		namespace = options.Namespace
+	}
+
+	rsp, err := e.client.Get(ctx, servicePath(namespace, name), clientv3.WithPrefix(), clientv3.WithSerializable())
 	if err != nil {
 		return nil, err
 	}
@@ -356,6 +390,7 @@ func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...regi
 				s = &registry.Service{
 					Name:      sn.Name,
 					Version:   sn.Version,
+					Namespace: sn.Namespace,
 					Metadata:  sn.Metadata,
 					Endpoints: sn.Endpoints,
 				}
@@ -380,7 +415,18 @@ func (e *etcdRegistry) ListServices(ctx context.Context, opts ...registry.ListOp
 	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
 
-	rsp, err := e.client.Get(ctx, prefix, clientv3.WithPrefix(), clientv3.WithSerializable())
+	var options registry.ListOptions
+	for _, o := range opts {
+		o(&options)
+	}
+
+	namespace := e.options.Namespace
+	if options.Namespace != "" {
+		namespace = options.Namespace
+	}
+
+	key := path.Join(prefix, namespace) + "/"
+	rsp, err := e.client.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSerializable())
 	if err != nil {
 		return nil, err
 	}
@@ -408,6 +454,7 @@ func (e *etcdRegistry) ListServices(ctx context.Context, opts ...registry.ListOp
 		services = append(services, &registry.Service{
 			Name:      service.Name,
 			Version:   service.Version,
+			Namespace: service.Namespace,
 			Metadata:  service.Metadata,
 			Nodes:     service.Nodes,
 			Endpoints: service.Endpoints,
@@ -429,27 +476,23 @@ func (e *etcdRegistry) String() string {
 }
 
 func NewRegistry(opts ...registry.Option) registry.Registry {
+	options := registry.NewOptions(opts...)
 	e := &etcdRegistry{
-		options:  registry.Options{},
+		options:  options,
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
-	}
-	for _, opt := range opts {
-		opt(&e.options)
 	}
 
 	return e
 }
 
 func NewEtcdRegistry(client *clientv3.Client, opts ...registry.Option) registry.Registry {
+	options := registry.NewOptions(opts...)
 	e := &etcdRegistry{
 		client:   client,
-		options:  registry.Options{},
+		options:  options,
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
-	}
-	for _, opt := range opts {
-		opt(&e.options)
 	}
 
 	return e
