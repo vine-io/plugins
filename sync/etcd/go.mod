@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/vine-io/vine v1.6.6
+	github.com/vine-io/vine v1.6.7
 	go.etcd.io/etcd/client/v3 v3.5.0
 )
 

@@ -2,7 +2,7 @@ module github.com/vine-io/plugins/sync/memory
 
 go 1.18
 
-require github.com/vine-io/vine v1.6.6
+require github.com/vine-io/vine v1.6.7
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
