@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/nats-io/nats.go v1.15.0
-	github.com/vine-io/vine v1.6.11
+	github.com/vine-io/vine v1.6.12
 )
 
 require (
