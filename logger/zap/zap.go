@@ -169,13 +169,7 @@ func (l *ZapLog) Init(opts ...logger.Option) error {
 }
 
 func (l *ZapLog) Fields(fields map[string]interface{}) logger.Logger {
-	l.Lock()
-	nfields := make(map[string]interface{}, len(l.fields))
-	for k, v := range fields {
-		nfields[k] = v
-	}
-
-	data := make([]zap.Field, 0, len(nfields))
+	data := make([]zap.Field, 0, len(fields))
 	for k, v := range fields {
 		data = append(data, zap.Any(k, v))
 	}

@@ -22,13 +22,16 @@ func TestName(t *testing.T) {
 }
 
 func TestLogf(t *testing.T) {
-	l, err := New(WithCallerSkip(2))
+	l, err := New(WithCallerSkip(2), logger.WithFields(map[string]interface{}{"a": "a", "b": "b"}))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	logger.DefaultLogger = l
 	logger.Logf(logger.InfoLevel, "test logf: %s", "name")
+	logger.Fields(map[string]interface{}{"a": "b"}).Logf(logger.InfoLevel, "test logf: %s", "name")
+	logger.Fields(map[string]interface{}{"a": "c"}).Logf(logger.InfoLevel, "test logf: %s", "name")
+	logger.Fields(map[string]interface{}{"a": "d"}).Logf(logger.InfoLevel, "test logf: %s", "name")
 }
 
 func TestSetLevel(t *testing.T) {
