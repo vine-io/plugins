@@ -22,7 +22,7 @@ func TestName(t *testing.T) {
 }
 
 func TestLogf(t *testing.T) {
-	l, err := New()
+	l, err := New(WithCallerSkip(2))
 	if err != nil {
 		t.Fatal(err)
 	}

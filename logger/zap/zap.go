@@ -78,8 +78,9 @@ func (l *ZapLog) Init(opts ...logger.Option) error {
 	}
 
 	zapConfig := zap.NewProductionConfig()
-	zapConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	zapConfig.EncoderConfig.EncodeTime = zapcore.RFC3339TimeEncoder
 	zapConfig.EncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	zapConfig.EncoderConfig.ConsoleSeparator = " | "
 	if zconfig, ok := l.opts.Context.Value(configKey{}).(zap.Config); ok {
 		zapConfig = zconfig
 	}
@@ -91,7 +92,6 @@ func (l *ZapLog) Init(opts ...logger.Option) error {
 	zopts := make([]zap.Option, 0)
 	skip, ok := l.opts.Context.Value(callerSkipKey{}).(int)
 	if ok {
-		skip = 1
 		zopts = append(zopts, zap.WithCaller(true), zap.AddCallerSkip(skip))
 	} else {
 		zopts = append(zopts, zap.WithCaller(false))
