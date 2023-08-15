@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/sony/gobreaker v0.4.1
-	github.com/vine-io/vine v1.6.13
+	github.com/vine-io/vine v1.6.14
 )
 
 require (

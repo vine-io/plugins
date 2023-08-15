@@ -38,7 +38,7 @@ import (
 func init() {
 	logger.Flag.String("logger.zap.format", "console", "Sets the format of log. eg console, json")
 	logger.Flag.String("logger.zap.filename", "", "Prints logger to the given filename")
-	logger.Flag.Int("logger.zap.max-size", 500, "Sets the log file max size (unit: megabytes)")
+	logger.Flag.Int("logger.zap.max-size", 50, "Sets the log file max size (unit: megabytes)")
 	logger.Flag.Int("logger.zap.max-backups", 3, "Sets the log file max backups")
 	logger.Flag.Int("logger.zap.max-age", 15, "Sets the log file keep days")
 	logger.Flag.Bool("logger.zap.compress", false, "Enable compress log fie")

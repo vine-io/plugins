@@ -2,5 +2,5 @@ github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
 github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/vine-io/vine v1.6.13 h1:qzdTt5LB9q5yyvY8Oo+oIEHbtG2GJtB5xR+lA16Pqlw=
-github.com/vine-io/vine v1.6.13/go.mod h1:h/Wd/5af6a+3k2m6teAWM/nP54vzPQkq7EyjB2F7fT4=
+github.com/vine-io/vine v1.6.14 h1:FiUzTPEn0FZ+c58HrnwSQffCdyuQ/jo+Ja4raBzJBi8=
+github.com/vine-io/vine v1.6.14/go.mod h1:h/Wd/5af6a+3k2m6teAWM/nP54vzPQkq7EyjB2F7fT4=

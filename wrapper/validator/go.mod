@@ -2,7 +2,7 @@ module github.com/vine-io/plugins/wrapper/validator
 
 go 1.18
 
-require github.com/vine-io/vine v1.6.13
+require github.com/vine-io/vine v1.6.14
 
 require (
 	github.com/gogo/protobuf v1.3.2 // indirect

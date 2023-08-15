@@ -4,8 +4,8 @@ go 1.18
 
 require (
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/vine-io/vine v1.6.13
-	go.uber.org/zap v1.24.0
+	github.com/vine-io/vine v1.6.14
+	go.uber.org/zap v1.25.0
 )
 
 require (
@@ -14,7 +14,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
