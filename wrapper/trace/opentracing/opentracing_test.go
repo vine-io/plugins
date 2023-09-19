@@ -11,7 +11,7 @@ import (
 	"github.com/vine-io/vine/core/client"
 	"github.com/vine-io/vine/core/client/grpc"
 	"github.com/vine-io/vine/core/client/selector"
-	"github.com/vine-io/vine/core/registry/memory"
+	"github.com/vine-io/vine/core/registry/mdns"
 	"github.com/vine-io/vine/core/server"
 	grpcsvc "github.com/vine-io/vine/core/server/grpc"
 	"github.com/vine-io/vine/lib/errors"
@@ -66,7 +66,7 @@ func TestClient(t *testing.T) {
 			tracer := mocktracer.New()
 
 			broker := bmemory.NewBroker()
-			registry := memory.NewRegistry()
+			registry := mdns.NewRegistry()
 			sel := selector.NewSelector(selector.Registry(registry))
 
 			serverName := "vine.server.name"
