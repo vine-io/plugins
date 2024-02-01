@@ -11,6 +11,10 @@ import (
 	"go.etcd.io/etcd/client/v3"
 )
 
+var (
+	DefaultPrefix = "/vine/config/"
+)
+
 // Currently a single etcd reader
 type etcd struct {
 	prefix      string
@@ -19,10 +23,6 @@ type etcd struct {
 	client      *clientv3.Client
 	cerr        error
 }
-
-var (
-	DefaultPrefix = "/vine/config/"
-)
 
 func (c *etcd) Read() (*source.ChangeSet, error) {
 	if c.cerr != nil {

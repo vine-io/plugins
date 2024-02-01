@@ -14,7 +14,7 @@ import (
 	cc "go.etcd.io/etcd/client/v3/concurrency"
 )
 
-type etcdSync struct {
+type EtcdSync struct {
 	options sync.Options
 	prefix  string
 	client  *clientv3.Client
@@ -28,7 +28,7 @@ type etcdLock struct {
 	m *cc.Mutex
 }
 
-func configure(e *etcdSync, client *clientv3.Client, opts ...sync.Option) error {
+func configure(e *EtcdSync, client *clientv3.Client, opts ...sync.Option) error {
 	options := e.options
 	for _, o := range opts {
 		o(&options)
@@ -67,7 +67,7 @@ func configure(e *etcdSync, client *clientv3.Client, opts ...sync.Option) error 
 	return nil
 }
 
-func (e *etcdSync) Init(opts ...sync.Option) error {
+func (e *EtcdSync) Init(opts ...sync.Option) error {
 	for _, o := range opts {
 		o(&e.options)
 	}
@@ -75,11 +75,11 @@ func (e *etcdSync) Init(opts ...sync.Option) error {
 	return configure(e, e.client, opts...)
 }
 
-func (e *etcdSync) Options() sync.Options {
+func (e *EtcdSync) Options() sync.Options {
 	return e.options
 }
 
-func (e *etcdSync) Leader(ctx context.Context, name string, opts ...sync.LeaderOption) (sync.Leader, error) {
+func (e *EtcdSync) Leader(ctx context.Context, name string, opts ...sync.LeaderOption) (sync.Leader, error) {
 	var options sync.LeaderOptions
 	for _, o := range opts {
 		o(&options)
@@ -120,7 +120,7 @@ func (e *etcdSync) Leader(ctx context.Context, name string, opts ...sync.LeaderO
 	return leader, nil
 }
 
-func (e *etcdSync) ListMembers(ctx context.Context, opts ...sync.ListMembersOption) ([]*sync.Member, error) {
+func (e *EtcdSync) ListMembers(ctx context.Context, opts ...sync.ListMembersOption) ([]*sync.Member, error) {
 	var options sync.ListMembersOptions
 	for _, opt := range opts {
 		opt(&options)
@@ -156,11 +156,11 @@ func (e *etcdSync) ListMembers(ctx context.Context, opts ...sync.ListMembersOpti
 	return members, nil
 }
 
-func (e *etcdSync) WatchElect(ctx context.Context, opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
+func (e *EtcdSync) WatchElect(ctx context.Context, opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
 	return newEtcdWatcher(e, opts...)
 }
 
-func (e *etcdSync) Lock(ctx context.Context, id string, opts ...sync.LockOption) error {
+func (e *EtcdSync) Lock(ctx context.Context, id string, opts ...sync.LockOption) error {
 	var options sync.LockOptions
 	for _, o := range opts {
 		o(&options)
@@ -210,7 +210,7 @@ func (e *etcdSync) Lock(ctx context.Context, id string, opts ...sync.LockOption)
 	return nil
 }
 
-func (e *etcdSync) Unlock(ctx context.Context, id string) error {
+func (e *EtcdSync) Unlock(ctx context.Context, id string) error {
 	e.mtx.Lock()
 	defer e.mtx.Unlock()
 	v, ok := e.locks[id]
@@ -223,8 +223,12 @@ func (e *etcdSync) Unlock(ctx context.Context, id string) error {
 	return err
 }
 
-func (e *etcdSync) String() string {
+func (e *EtcdSync) String() string {
 	return "etcd"
+}
+
+func (e *EtcdSync) GetConn() *clientv3.Client {
+	return e.client
 }
 
 func NewSync(opts ...sync.Option) sync.Sync {
@@ -233,7 +237,7 @@ func NewSync(opts ...sync.Option) sync.Sync {
 		o(&options)
 	}
 
-	e := &etcdSync{
+	e := &EtcdSync{
 		prefix:  options.Prefix,
 		options: options,
 		locks:   make(map[string]*etcdLock),
@@ -247,7 +251,7 @@ func NewEtcdSync(client *clientv3.Client, opts ...sync.Option) sync.Sync {
 		o(&options)
 	}
 
-	e := &etcdSync{
+	e := &EtcdSync{
 		prefix:  options.Prefix,
 		options: options,
 		client:  client,

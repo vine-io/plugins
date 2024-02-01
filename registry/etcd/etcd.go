@@ -34,7 +34,7 @@ import (
 	"time"
 
 	json "github.com/json-iterator/go"
-	hash "github.com/mitchellh/hashstructure"
+	hash "github.com/mitchellh/hashstructure/v2"
 	"github.com/vine-io/vine/core/registry"
 	"github.com/vine-io/vine/lib/cmd"
 	log "github.com/vine-io/vine/lib/logger"
@@ -53,7 +53,7 @@ func init() {
 	registry.Flag.String("registry.etcd.password", "", "Sets the password for client of etcdv3")
 }
 
-type etcdRegistry struct {
+type Registry struct {
 	client  *clientv3.Client
 	options registry.Options
 
@@ -62,7 +62,7 @@ type etcdRegistry struct {
 	leases   map[string]clientv3.LeaseID
 }
 
-func configure(e *etcdRegistry, client *clientv3.Client, opts ...registry.Option) error {
+func configure(e *Registry, client *clientv3.Client, opts ...registry.Option) error {
 
 	var err error
 
@@ -150,15 +150,15 @@ func servicePath(ns, s string) string {
 	return path.Join(prefix, ns, strings.Replace(s, "/", "-", -1))
 }
 
-func (e *etcdRegistry) Init(opts ...registry.Option) error {
+func (e *Registry) Init(opts ...registry.Option) error {
 	return configure(e, e.client, opts...)
 }
 
-func (e *etcdRegistry) Options() registry.Options {
+func (e *Registry) Options() registry.Options {
 	return e.options
 }
 
-func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, node *registry.Node, opts ...registry.RegisterOption) error {
+func (e *Registry) registerNode(ctx context.Context, s *registry.Service, node *registry.Node, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -202,7 +202,7 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 				}
 
 				// create hash of service; uint64
-				h, err := hash.Hash(svc.Nodes[0], nil)
+				h, err := hash.Hash(svc.Nodes[0], hash.FormatV2, nil)
 				if err != nil {
 					continue
 				}
@@ -236,7 +236,7 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 	}
 
 	// create hash of service; uint64
-	h, err := hash.Hash(node, nil)
+	h, err := hash.Hash(node, hash.FormatV2, nil)
 	if err != nil {
 		return err
 	}
@@ -299,7 +299,7 @@ func (e *etcdRegistry) registerNode(ctx context.Context, s *registry.Service, no
 	return nil
 }
 
-func (e *etcdRegistry) Deregister(ctx context.Context, s *registry.Service, opts ...registry.DeregisterOption) error {
+func (e *Registry) Deregister(ctx context.Context, s *registry.Service, opts ...registry.DeregisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("required at lease one node")
 	}
@@ -340,7 +340,7 @@ func (e *etcdRegistry) Deregister(ctx context.Context, s *registry.Service, opts
 	return nil
 }
 
-func (e *etcdRegistry) Register(ctx context.Context, s *registry.Service, opts ...registry.RegisterOption) error {
+func (e *Registry) Register(ctx context.Context, s *registry.Service, opts ...registry.RegisterOption) error {
 	if len(s.Nodes) == 0 {
 		return errors.New("require at lease one node")
 	}
@@ -358,7 +358,7 @@ func (e *etcdRegistry) Register(ctx context.Context, s *registry.Service, opts .
 	return grr
 }
 
-func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...registry.GetOption) ([]*registry.Service, error) {
+func (e *Registry) GetService(ctx context.Context, name string, opts ...registry.GetOption) ([]*registry.Service, error) {
 	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
 	defer cancel()
 
@@ -409,7 +409,7 @@ func (e *etcdRegistry) GetService(ctx context.Context, name string, opts ...regi
 	return services, nil
 }
 
-func (e *etcdRegistry) ListServices(ctx context.Context, opts ...registry.ListOption) ([]*registry.Service, error) {
+func (e *Registry) ListServices(ctx context.Context, opts ...registry.ListOption) ([]*registry.Service, error) {
 	versions := make(map[string]*registry.Service)
 
 	ctx, cancel := context.WithTimeout(ctx, e.options.Timeout)
@@ -467,17 +467,21 @@ func (e *etcdRegistry) ListServices(ctx context.Context, opts ...registry.ListOp
 	return services, nil
 }
 
-func (e *etcdRegistry) Watch(ctx context.Context, opts ...registry.WatchOption) (registry.Watcher, error) {
+func (e *Registry) Watch(ctx context.Context, opts ...registry.WatchOption) (registry.Watcher, error) {
 	return newEtcdWatcher(e, e.options.Timeout, opts...)
 }
 
-func (e *etcdRegistry) String() string {
+func (e *Registry) String() string {
 	return "etcd"
+}
+
+func (e *Registry) GetConn() *clientv3.Client {
+	return e.client
 }
 
 func NewRegistry(opts ...registry.Option) registry.Registry {
 	options := registry.NewOptions(opts...)
-	e := &etcdRegistry{
+	e := &Registry{
 		options:  options,
 		register: make(map[string]uint64),
 		leases:   make(map[string]clientv3.LeaseID),
@@ -488,7 +492,7 @@ func NewRegistry(opts ...registry.Option) registry.Registry {
 
 func NewEtcdRegistry(client *clientv3.Client, opts ...registry.Option) registry.Registry {
 	options := registry.NewOptions(opts...)
-	e := &etcdRegistry{
+	e := &Registry{
 		client:   client,
 		options:  options,
 		register: make(map[string]uint64),

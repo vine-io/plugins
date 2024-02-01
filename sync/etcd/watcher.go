@@ -16,7 +16,7 @@ type etcdWatcher struct {
 	client *clientv3.Client
 }
 
-func newEtcdWatcher(e *etcdSync, opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
+func newEtcdWatcher(e *EtcdSync, opts ...sync.WatchElectOption) (sync.ElectWatcher, error) {
 	var wo sync.WatchElectOptions
 	for _, o := range opts {
 		o(&wo)

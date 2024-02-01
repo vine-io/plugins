@@ -39,7 +39,7 @@ type etcdWatcher struct {
 	timeout time.Duration
 }
 
-func newEtcdWatcher(r *etcdRegistry, timeout time.Duration, opts ...registry.WatchOption) (registry.Watcher, error) {
+func newEtcdWatcher(r *Registry, timeout time.Duration, opts ...registry.WatchOption) (registry.Watcher, error) {
 	var wo registry.WatchOptions
 	for _, o := range opts {
 		o(&wo)
